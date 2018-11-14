@@ -1,7 +1,6 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+/*! server.ts - v0.0.2 - 2018
+* Flamingos are pretty badass!
+* Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
 import {
 	createConnection,
@@ -124,22 +123,29 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
-	let pattern: RegExp = /(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)|(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)/ig;
+	let pattern: RegExp = /(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)|(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)|(?:<div()>|<div(?=\s)([\s\S]*?[^-?])??>)/ig;
+	
+	// For some weird reason, the '\' keeps disappearing from the Array
+	// let testPattern: String[] = [
+	// 	"(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)",
+	// 	"(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)"
+	// ];
+	// let re: RegExp = new RegExp(testPattern.join('|'), 'ig');
 	let m: RegExpExecArray | null;
 	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		m.forEach(el => {
 			switch (true) {
-				case /<img/.test(el):
+				case (/<img/.test(el) && !/alt/i.test(el)):
 					problems++;
 					_diagnostics('<img> should have an alt text that describes the image');
 					break;
-				case /<a/.test(el):
+				case (/<a/.test(el)&& !/title/i.test(el)):
 					problems++;
 					_diagnostics('<a> should have a title attribute if there is no text provided with in the tags');
 					break;
-				case /<div/.test(el):
+				case (/<div/.test(el) && !/role/i.test(el)):
 					problems++;
 					_diagnostics('<div> should have a role specified');
 					break;
@@ -148,7 +154,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 			}
 		});
 
-		function _diagnostics(diagnosticsMessage) {
+		async function _diagnostics(diagnosticsMessage) {
 			let diagnosic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
 				range: {
@@ -158,7 +164,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				message: diagnosticsMessage,
 				source: 'web accessibility'
 			};
-			console.log(diagnosic);
 			
 			diagnostics.push(diagnosic);
 		}		

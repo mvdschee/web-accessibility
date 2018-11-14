@@ -1,7 +1,6 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+/*! extension.ts - v0.0.2 - 2018
+* Flamingos are pretty badass!
+* Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
 import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
