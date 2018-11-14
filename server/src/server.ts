@@ -11,10 +11,7 @@ import {
 	DiagnosticSeverity,
 	ProposedFeatures,
 	InitializeParams,
-	DidChangeConfigurationNotification,
-	CompletionItem,
-	CompletionItemKind,
-	TextDocumentPositionParams
+	DidChangeConfigurationNotification
 } from 'vscode-languageserver';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
@@ -127,41 +124,44 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
-	let pattern = /(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)/ig;
+	let pattern: RegExp = /(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)|(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)/ig;
 	let m: RegExpExecArray | null;
-
 	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		problems++;
-		let diagnosic: Diagnostic = {
-			severity: DiagnosticSeverity.Warning,
-			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
-			},
-			message: `<a> should have a title attribute`,
-			source: 'web accessibility'
-		};
-		// if (hasDiagnosticRelatedInformationCapability) {
-		// 	diagnosic.relatedInformation = [
-		// 		{
-		// 			location: {
-		// 				uri: textDocument.uri,
-		// 				range: Object.assign({}, diagnosic.range)
-		// 			},
-		// 			message: '<a> tags should only include a title attribute if it is not possible to make the link destination clear with the link text alone.'
-		// 		}
-		// 		// {
-		// 		// 	location: {
-		// 		// 		uri: textDocument.uri,
-		// 		// 		range: Object.assign({}, diagnosic.range)
-		// 		// 	},
-		// 		// 	message: 'Particularly for names'
-		// 		// }
-		// 	];
-		// }
-		diagnostics.push(diagnosic);
+		m.forEach(el => {
+			switch (true) {
+				case /<img/.test(el):
+					problems++;
+					_diagnostics('<img> should have an alt text that describes the image');
+					break;
+				case /<a/.test(el):
+					problems++;
+					_diagnostics('<a> should have a title attribute if there is no text provided with in the tags');
+					break;
+				case /<div/.test(el):
+					problems++;
+					_diagnostics('<div> should have a role specified');
+					break;
+				default:
+					break;
+			}
+		});
+
+		function _diagnostics(diagnosticsMessage) {
+			let diagnosic: Diagnostic = {
+				severity: DiagnosticSeverity.Warning,
+				range: {
+					start: textDocument.positionAt(m.index),
+					end: textDocument.positionAt(m.index + m[0].length)
+				},
+				message: diagnosticsMessage,
+				source: 'web accessibility'
+			};
+			console.log(diagnosic);
+			
+			diagnostics.push(diagnosic);
+		}		
 	}
 
 	// Send the computed diagnostics to VSCode.
@@ -172,42 +172,6 @@ connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
 	connection.console.log('We received an file change event');
 });
-
-// This handler provides the initial list of the completion items.
-// connection.onCompletion(
-// 	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-// 		// The pass parameter contains the position of the text document in
-// 		// which code complete got requested. For the example we ignore this
-// 		// info and always provide the same completion items.
-// 		return [
-// 			{
-// 				label: 'TypeScript',
-// 				kind: CompletionItemKind.Text,
-// 				data: 1
-// 			},
-// 			{
-// 				label: 'JavaScript',
-// 				kind: CompletionItemKind.Text,
-// 				data: 2
-// 			}
-// 		];
-// 	}
-// );
-
-// This handler resolve additional information for the item selected in
-// the completion list.
-// connection.onCompletionResolve(
-// 	(item: CompletionItem): CompletionItem => {
-// 		if (item.data === 1) {
-// 			(item.detail = 'TypeScript details'),
-// 				(item.documentation = 'TypeScript documentation');
-// 		} else if (item.data === 2) {
-// 			(item.detail = 'JavaScript details'),
-// 				(item.documentation = 'JavaScript documentation');
-// 		}
-// 		return item;
-// 	}
-// );
 
 /*
 connection.onDidOpenTextDocument((params) => {
