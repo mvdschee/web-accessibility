@@ -1,4 +1,4 @@
-/*! server.ts - v0.0.2 - 2018
+/*! server.ts - v0.1.0 - 2018
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
@@ -23,7 +23,7 @@ let documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
+// let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -32,10 +32,10 @@ connection.onInitialize((params: InitializeParams) => {
 	// If not, we will fall back using global settings
 	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
 	hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
-	hasDiagnosticRelatedInformationCapability =
-		!!(capabilities.textDocument &&
-		capabilities.textDocument.publishDiagnostics &&
-		capabilities.textDocument.publishDiagnostics.relatedInformation);
+	// hasDiagnosticRelatedInformationCapability =
+	// 	!!(capabilities.textDocument &&
+	// 	capabilities.textDocument.publishDiagnostics &&
+	// 	capabilities.textDocument.publishDiagnostics.relatedInformation);
 
 	return {
 		capabilities: {
@@ -63,14 +63,12 @@ connection.onInitialized(() => {
 	}
 });
 
-// The example settings
+// The server settings
 interface ServerSettings {
 	maxNumberOfProblems: number;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
-// Please note that this is not the case when using this server with the client provided in this example
-// but could happen with other clients.
 const defaultSettings: ServerSettings = { maxNumberOfProblems: 1000 };
 let globalSettings: ServerSettings = defaultSettings;
 
@@ -111,50 +109,83 @@ documents.onDidClose(e => {
 	documentSettings.delete(e.document.uri);
 });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
+// The content of a HTML document has changed. This event is emitted
+// when the HTML document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-	// In this simple example we get the settings for every validate run.
+	//Get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
 
-	// The validator creates diagnostics for all uppercase words length 2 and more
+	// The validator creates diagnostics for all errors and more
 	let text = textDocument.getText();
-	let pattern: RegExp = /(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)|(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)|(?:<div()>|<div(?=\s)([\s\S]*?[^-?])??>)/ig;
-	
-	// For some weird reason, the '\' keeps disappearing from the Array
-	// let testPattern: String[] = [
-	// 	"(?:<a()>|<a(?=\s)([\s\S]*?[^-?])??>)",
-	// 	"(?:<img()>|<img(?=\s)([\s\S]*?[^-?])??>)"
-	// ];
-	// let re: RegExp = new RegExp(testPattern.join('|'), 'ig');
+	// order based om most common types: div span a img meta html
+	let pattern: RegExp = /<div(?:[\s\S]*?[^-?])>|<span(?:[\s\S]*?[^-?])>|<a(?:.|\n)*?>(?:.|\n)*?<\/a>|<img(?:[\s\S]*?[^-?])>|<meta(?:[\s\S]*?[^-?])>|<html(?:[\s\S]*?[^-?])>/ig;
 	let m: RegExpExecArray | null;
 	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		m.forEach(el => {
-			switch (true) {
-				case (/<img/.test(el) && !/alt/i.test(el)):
-					problems++;
-					_diagnostics('<img> should have an alt text that describes the image');
-					break;
-				case (/<a/.test(el)&& !/title/i.test(el)):
-					problems++;
-					_diagnostics('<a> should have a title attribute if there is no text provided with in the tags');
-					break;
-				case (/<div/.test(el) && !/role/i.test(el)):
-					problems++;
-					_diagnostics('<div> should have a role specified');
-					break;
-				default:
-					break;
+			if (el != undefined){
+				switch (true) {
+					// Div
+					case (/<div/.test(el) && !/role/i.test(el)):
+						problems++;
+						_diagnostics('try using Semantic HTML instead of <div> or specify a WAI-ARIA role=""');
+						break;
+					// Span
+					case (/<span/.test(el) && !/role/i.test(el)):
+						if (/button/.test(el)) {
+							problems++;
+							_diagnostics('Change the <span> to a <button>');
+						} else {
+							problems++;
+							_diagnostics('Set a WAI-ARIA role="" for the <span>');
+						}
+						break;
+					// Links
+					case (/<a/.test(el) && !/>[a-z]+</i.test(el)):
+						problems++;
+						_diagnostics('<a> should have a descriptive text between the tags');
+						break;
+					// Images
+					case (/<img/.test(el) && !/alt="[a-z]+"/i.test(el)):
+						problems++;
+						_diagnostics('<img> should have an alt="" text that describes the image');
+						break;
+					// Meta
+					case (/<meta(?:[\s\S]*?[^-?])name="viewport"/.test(el) && !/scalable="yes"/i.test(el)):
+						problems++;
+						_diagnostics('set pinching to zoom with user-scalable="yes"');
+						break;
+					// HTML
+					case (/<html/.test(el) && !/lang="[a-z]+"/i.test(el)):
+						problems++;
+						_diagnostics('set the language for your websites content with lang=""');
+						break;
+					// Head
+					// case (/<head/.test(el)):
+					// 	if(/<meta name="viewport"/.test(el) && !/scalable="yes"/i.test(el)) {
+					// 		problems++;
+					// 		_diagnostics('Consider setting pinching to zoom with user-scalable="yes"');
+					// 	}
+	
+					// 	if (!/<title/i.test(el)) {
+					// 		problems++;
+					// 		_diagnostics('Consider setting a <title> in the <head> tags');
+					// 	}
+					// 	break;
+					default:
+						break;
+				}
+
 			}
+
 		});
 
-		async function _diagnostics(diagnosticsMessage) {
+		async function _diagnostics(diagnosticsMessage: string) {
 			let diagnosic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
 				range: {
@@ -178,27 +209,7 @@ connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received an file change event');
 });
 
-/*
-connection.onDidOpenTextDocument((params) => {
-	// A text document got opened in VSCode.
-	// params.uri uniquely identifies the document. For documents store on disk this is a file URI.
-	// params.text the initial full content of the document.
-	connection.console.log(`${params.textDocument.uri} opened.`);
-});
-connection.onDidChangeTextDocument((params) => {
-	// The content of a text document did change in VSCode.
-	// params.uri uniquely identifies the document.
-	// params.contentChanges describe the content changes to the document.
-	connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
-});
-connection.onDidCloseTextDocument((params) => {
-	// A text document got closed in VSCode.
-	// params.uri uniquely identifies the document.
-	connection.console.log(`${params.textDocument.uri} closed.`);
-});
-*/
-
-// Make the text document manager listen on the connection
+// Make the HTML document manager listen on the connection
 // for open, change and close text document events
 documents.listen(connection);
 

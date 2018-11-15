@@ -3,15 +3,17 @@
 	"description": "Web Accessibility for Visual Studio Code",
 	"author": "MaxvanderSchee",
 	"license": "MIT",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/mvdschee/web-accessibility"
 	},
 	"publisher": "MaxvanderSchee",
-	"categories": [],
+	"categories": [
+		"Linters"
+	],
 	"keywords": [
-		"multi-root ready"
+		"extension visual-studio-code web-accessibility typescript language-server"
 	],
 	"engines": {
 		"vscode": "^1.23.0"

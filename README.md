@@ -1,65 +1,41 @@
-# web-accessibility README
-
-This is the README for your extension "web-accessibility". After writing up a brief description, we recommend including the following sections.
+# Web Accessibility Extension - Visual Studio Code
+This extension helps you with coding HTML that allows users with visual disabilities to browse your website/application with more ease.
 
 ## Features
+The extension searches through your HTML for Web Accessibility code errors.
+If an error is found, the error is underlined, and a suggestion is given.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+**(Gif coming soon)**
 
 ## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+This extension has the following settings:
+* `web-accessibility.enable`: enable/disable this extension
 
 ## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+The following Issues will be dealt with soon.
+* `<a>` tags are not being flagged if on multiple lines.
+* `<title>` tags are not being flagged.
+* More informing messages with links to resources.
 
 ## Release Notes
+All notable changes to this project will be documented here.
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
+* Auto-generated extension for Visual Studio Code with [Yocode](https://code.visualstudio.com/docs/extensions/yocode)
 
-### 1.0.0
+### 0.0.2
+* Changed extension type to `language-server`
 
-Initial release of ...
+### 0.1.0
+* Added RegEx search qeuries for `<div>, <span>, <a>, <img>, <meta>, <html>`
+* Added messages for above coding errors
 
-### 1.0.1
 
-Fixed issue #.
+## License
+This resource can be used freely if integrated or build upon in personal or commercial projects such as websites, web apps and web templates intended for sale. It is not allowed to take the resource "as-is" and sell it, redistribute, re-publish it, or sell "pluginized" versions of it. Free plugins built using this resource should have a visible mention and link to the original work. Always consider the licenses of all included libraries, scripts and images used.
 
-### 1.1.0
+## Misc
 
-Added features X, Y, and Z.
+Follow Me: [Medium](https://medium.com/@maxvanderschee), [GitHub](https://github.com/mvdschee), [Twitter](https://twitter.com/maxvanderschee)
 
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+[© Max van der Schee 2018](https://maxvanderschee.nl)

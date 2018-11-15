@@ -1,4 +1,4 @@
-/*! extension.ts - v0.0.2 - 2018
+/*! extension.ts - v0.1.0 - 2018
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
@@ -36,7 +36,7 @@ export function activate(context: ExtensionContext) {
 
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
-		// Register the server for plain text documents
+		// Register the server for HTML documents
 		documentSelector: [{ scheme: 'file', language: 'html' }],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
