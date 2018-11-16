@@ -1,16 +1,13 @@
 {
 	"name": "web-accessibility-server",
 	"description": "Web Accessibility for Visual Studio Code",
-	"version": "0.0.2",
+	"version": "0.1.1",
 	"author": "MaxvanderSchee",
 	"license": "MIT",
 	"engines": {
 		"node": "*"
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/mvdschee/web-accessibility"
-	},
+	"repository": "https://github.com/mvdschee/web-accessibility",
 	"dependencies": {
 		"vscode-languageserver": "^4.1.3"
 	},

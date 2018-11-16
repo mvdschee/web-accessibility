@@ -1,4 +1,4 @@
-/*! extension.ts - v0.1.0 - 2018
+/*! extension.ts
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 

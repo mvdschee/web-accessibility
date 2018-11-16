@@ -1,4 +1,4 @@
-/*! server.ts - v0.1.0 - 2018
+/*! server.ts
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
@@ -12,6 +12,7 @@ import {
 	InitializeParams,
 	DidChangeConfigurationNotification
 } from 'vscode-languageserver';
+import { pattern } from './Patterns';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -121,68 +122,61 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 	// The validator creates diagnostics for all errors and more
 	let text = textDocument.getText();
-	// order based om most common types: div span a img meta html
-	let pattern: RegExp = /<div(?:[\s\S]*?[^-?])>|<span(?:[\s\S]*?[^-?])>|<a(?:.|\n)*?>(?:.|\n)*?<\/a>|<img(?:[\s\S]*?[^-?])>|<meta(?:[\s\S]*?[^-?])>|<html(?:[\s\S]*?[^-?])>/ig;
 	let m: RegExpExecArray | null;
 	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
+	
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		m.forEach(el => {
 			if (el != undefined){
+				// problemsRecognition(el);
 				switch (true) {
 					// Div
-					case (/<div/.test(el) && !/role/i.test(el)):
+					case (/<div/.test(el) && !/role="(?:\s*?[a-z]+\s*?)"/i.test(el)):
 						problems++;
-						_diagnostics('try using Semantic HTML instead of <div> or specify a WAI-ARIA role=""');
+						_diagnostics('Use Semantic HTML5 or specify a WAI-ARIA role=""');
 						break;
 					// Span
-					case (/<span/.test(el) && !/role/i.test(el)):
-						if (/button/.test(el)) {
+					case (/<span/.test(el) && !/role="(?:\s*?[a-z]+\s*?)"/i.test(el)):
+						if (/<span(?:[\s\S]*?[^-?])button(?:[\s\S]*?[^-?])>/.test(el)) {
 							problems++;
-							_diagnostics('Change the <span> to a <button>');
+							_diagnostics('Change to a <button>');
 						} else {
 							problems++;
-							_diagnostics('Set a WAI-ARIA role="" for the <span>');
+							_diagnostics('Provide a WAI-ARIA role=""');
 						}
 						break;
 					// Links
-					case (/<a/.test(el) && !/>[a-z]+</i.test(el)):
+					case (/<a/.test(el) && !/>(?:\s*?[a-z]+\s*?)</i.test(el)):
 						problems++;
-						_diagnostics('<a> should have a descriptive text between the tags');
+						_diagnostics('Provide a descriptive text between the tags');
 						break;
 					// Images
-					case (/<img/.test(el) && !/alt="[a-z]+"/i.test(el)):
+					case (/<img/.test(el) && !/alt="(?:\s*?[a-z]+\s*?)"/i.test(el)):
 						problems++;
-						_diagnostics('<img> should have an alt="" text that describes the image');
+						_diagnostics('Provide an alt="" text that describes the image');
 						break;
 					// Meta
-					case (/<meta(?:[\s\S]*?[^-?])name="viewport"/.test(el) && !/scalable="yes"/i.test(el)):
-						problems++;
-						_diagnostics('set pinching to zoom with user-scalable="yes"');
+					case (/<meta(?:[\s\S]*?[^-?])name="viewport"/.test(el)):
+						if (!/scalable=(?:\s*?yes\s*?)/i.test(el)) {
+							problems++;
+							_diagnostics('Enable pinching to zoom with user-scalable=yes');
+						}
+						if (/maximum-scale=(?:\s*?1)/i.test(el)) {
+							problems++;
+							_diagnostics('Avoid using maximum-scale=1');
+						}
 						break;
 					// HTML
-					case (/<html/.test(el) && !/lang="[a-z]+"/i.test(el)):
+					case (/<html/.test(el) && !/lang="(?:\s*?[a-z]+\s*?)"/i.test(el)):
 						problems++;
-						_diagnostics('set the language for your websites content with lang=""');
+						_diagnostics('Provide a language with lang=""');
 						break;
-					// Head
-					// case (/<head/.test(el)):
-					// 	if(/<meta name="viewport"/.test(el) && !/scalable="yes"/i.test(el)) {
-					// 		problems++;
-					// 		_diagnostics('Consider setting pinching to zoom with user-scalable="yes"');
-					// 	}
-	
-					// 	if (!/<title/i.test(el)) {
-					// 		problems++;
-					// 		_diagnostics('Consider setting a <title> in the <head> tags');
-					// 	}
-					// 	break;
 					default:
 						break;
 				}
-
 			}
-
+			connection.console.log(problems.toString());
 		});
 
 		async function _diagnostics(diagnosticsMessage: string) {
@@ -203,6 +197,10 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
+
+// async function problemsRecognition(el: string) {
+	
+// }
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode

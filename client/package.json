@@ -3,14 +3,11 @@
 	"description": "Web Accessibility for Visual Studio Code",
 	"author": "MaxvanderSchee",
 	"license": "MIT",
-	"version": "0.0.2",
+	"version": "0.1.1",
 	"publisher": "MaxvanderSchee",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/mvdschee/web-accessibility"
-	},
+	"repository": "https://github.com/mvdschee/web-accessibility",
 	"engines": {
-		"vscode": "^1.23.0"
+		"vscode": "^1.25.0"
 	},
 	"scripts": {
 		"update-vscode": "vscode-install",
