@@ -132,13 +132,13 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				// problemsRecognition(el);
 				switch (true) {
 					// Div
-					case (/<div/.test(el) && !/role="(?:\s*?[a-z]+\s*?)"/i.test(el)):
+					case (/<div/.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
 						problems++;
 						_diagnostics('Use Semantic HTML5 or specify a WAI-ARIA role=""');
 						break;
 					// Span
-					case (/<span/.test(el) && !/role="(?:\s*?[a-z]+\s*?)"/i.test(el)):
-						if (/<span(?:[\s\S]*?[^-?])button(?:[\s\S]*?[^-?])>/.test(el)) {
+					case (/<span/.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
+						if (/<span(?:.+?)button(?:.+?)>/.test(el)) {
 							problems++;
 							_diagnostics('Change to a <button>');
 						} else {
@@ -147,28 +147,35 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						}
 						break;
 					// Links
-					case (/<a/.test(el) && !/>(?:\s*?[a-z]+\s*?)</i.test(el)):
+					case (/<a/.test(el) && !/>(?:\s+?[a-z]+\s+?)</i.test(el)):
 						problems++;
 						_diagnostics('Provide a descriptive text between the tags');
 						break;
 					// Images
-					case (/<img/.test(el) && !/alt="(?:\s*?[a-z]+\s*?)"/i.test(el)):
+					case (/<img/.test(el) && !/alt=(?:.*?[a-z].*?)"/i.test(el)):
 						problems++;
 						_diagnostics('Provide an alt="" text that describes the image');
 						break;
-					// Meta
-					case (/<meta(?:[\s\S]*?[^-?])name="viewport"/.test(el)):
-						if (!/scalable=(?:\s*?yes\s*?)/i.test(el)) {
-							problems++;
-							_diagnostics('Enable pinching to zoom with user-scalable=yes');
+					// Head, title and meta
+					case (/<head/.test(el)):
+						connection.console.log(el);
+						if (/<meta(?:.+?)viewport/.test(el)) {
+							if (!/scalable=(?:\s+?yes)/i.test(el)) {
+								problems++;
+								_diagnostics('Enable pinching to zoom with user-scalable=yes');
+							}
+							if (/maximum-scale=(?:\s+?1)/i.test(el)) {
+								problems++;
+								_diagnostics('Avoid using maximum-scale=1');
+							}
 						}
-						if (/maximum-scale=(?:\s*?1)/i.test(el)) {
+						if (!/<title>(?:.*?[a-z].*?)</i.test(el)) {
 							problems++;
-							_diagnostics('Avoid using maximum-scale=1');
+							_diagnostics('Provide a title with in the <head> tags');
 						}
 						break;
 					// HTML
-					case (/<html/.test(el) && !/lang="(?:\s*?[a-z]+\s*?)"/i.test(el)):
+					case (/<html/.test(el) && !/lang=(?:.*?[a-z].*?)"/i.test(el)):
 						problems++;
 						_diagnostics('Provide a language with lang=""');
 						break;
@@ -176,7 +183,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						break;
 				}
 			}
-			connection.console.log(problems.toString());
 		});
 
 		async function _diagnostics(diagnosticsMessage: string) {

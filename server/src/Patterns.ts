@@ -4,12 +4,12 @@
 
 // Order based om most common types first
 const patterns: string[] = [
-	"<div(?:[\\s\\S]*?[^-?])>",
-	"<span(?:[\\s\\S]*?[^-?])>",
-	"<a(?:.|\\n)*?>(?:.|\\n)*?<\/a>",
-	"<img(?:[\\s\\S]*?[^-?])>",
-	"<meta(?:[\\s\\S]*?[^-?])>",
-	"<html(?:[\\s\\S]*?[^-?])>"
+	"<div(?:.)+?>",
+	"<span(?:.)+?>",
+	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
+	"<img(?:.)+?>",
+	"<head(?:.|)+?>(?:(?:\\s|\\S)+?(?=<\/head>))<\/head>",
+	"<html(?:.)+?>"
 ];
 
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');

@@ -13,9 +13,9 @@ This extension has the following settings:
 
 ## Known Issues
 The following Issues will be dealt with soon.
-* `<a>` tags are not being flagged if on multiple lines.
-* `<title>` tags are not being flagged.
+* Highlight whole `<head>` for `<title>` and `<meta>` error.
 * More informing messages with links to resources.
+* Not all Web Accessibility errors implemented.
 
 ## Release Notes
 All notable changes to this project will be documented in the [Changelog](./CHANGELOG.md).
