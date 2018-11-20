@@ -13,7 +13,7 @@ This extension has the following settings:
 
 ## Known Issues
 The following Issues will be dealt with soon.
-* Highlight whole `<head>` for `<title>` and `<meta>` error.
+* `<a>` only removes error if text is right after the first tag.
 * More informing messages with links to resources.
 * Not all Web Accessibility errors implemented.
 

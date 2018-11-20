@@ -127,86 +127,97 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 	
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		m.forEach(el => {
-			if (el != undefined){
-				// problemsRecognition(el);
-				switch (true) {
-					// Div
-					case (/<div/.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
+		let el = m[0];
+		if (el != null) {
+			switch (true) {
+				// Div
+				case (/<div/i.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
+					problems++;
+					_diagnostics(m,'Use Semantic HTML5 or specify a WAI-ARIA role=""');
+					break;
+				// Span
+				case (/<span/i.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
+					if (/<span(?:.+?)button(?:.+?)>/.test(el)) {
 						problems++;
-						_diagnostics('Use Semantic HTML5 or specify a WAI-ARIA role=""');
-						break;
-					// Span
-					case (/<span/.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
-						if (/<span(?:.+?)button(?:.+?)>/.test(el)) {
+						_diagnostics(m,'Change to a <button>');
+					} else {
+						problems++;
+						_diagnostics(m,'Provide a WAI-ARIA role=""');
+					}
+					break;
+				// Links
+				case (/<a/ig.test(el)):
+					if (!/<a(?:.+?)>(?:(|\s)[a-z]+?(|\s)+?)</ig.test(el)) {
+						problems++;
+						_diagnostics(m,'Provide a descriptive text right after <a href=""> and in between the tags');
+					}
+					break;
+				// Images
+				case (/<img/i.test(el) && !/alt=(?:.*?[a-z].*?)"/i.test(el)):
+					problems++;
+					_diagnostics(m,'Provide an alt="" text that describes the image');
+					break;
+				// Head, title and meta
+				case (/<head/i.test(el)):
+					let metaRegEx: RegExpExecArray;
+					let titleRegEx: RegExpExecArray;
+					let oldIndex: number = m.index;
+					if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(el))) {	
+						m[0] = metaRegEx[0];
+						m.index = oldIndex + metaRegEx.index;
+						if (!/scalable=(?:\s+?yes)/i.test(el)) {
 							problems++;
-							_diagnostics('Change to a <button>');
-						} else {
+							_diagnostics(m,'Enable pinching to zoom with user-scalable=yes');
+						}
+						if (/maximum-scale=(?:\s+?1)/i.test(el)) {
 							problems++;
-							_diagnostics('Provide a WAI-ARIA role=""');
+							_diagnostics(m,'Avoid using maximum-scale=1');
 						}
-						break;
-					// Links
-					case (/<a/.test(el) && !/>(?:\s+?[a-z]+\s+?)</i.test(el)):
+					}
+					if (!/<title>/i.test(el)) {
+						titleRegEx = /<head(?:|.+?)>/i.exec(el);
+						m[0] = titleRegEx[0];
+						m.index = oldIndex + titleRegEx.index;
 						problems++;
-						_diagnostics('Provide a descriptive text between the tags');
-						break;
-					// Images
-					case (/<img/.test(el) && !/alt=(?:.*?[a-z].*?)"/i.test(el)):
-						problems++;
-						_diagnostics('Provide an alt="" text that describes the image');
-						break;
-					// Head, title and meta
-					case (/<head/.test(el)):
-						connection.console.log(el);
-						if (/<meta(?:.+?)viewport/.test(el)) {
-							if (!/scalable=(?:\s+?yes)/i.test(el)) {
-								problems++;
-								_diagnostics('Enable pinching to zoom with user-scalable=yes');
-							}
-							if (/maximum-scale=(?:\s+?1)/i.test(el)) {
-								problems++;
-								_diagnostics('Avoid using maximum-scale=1');
-							}
-						}
-						if (!/<title>(?:.*?[a-z].*?)</i.test(el)) {
+						_diagnostics(m,'Provide a title with in the <head> tags');
+					} else {
+						titleRegEx = /<title>(?:|.*?[a-z].*?|\s+?)<\/title>/i.exec(el);
+						if (/>(?:|\s+?)</i.test(titleRegEx[0])) {
+							m[0] = titleRegEx[0];
+							m.index = oldIndex + titleRegEx.index;
 							problems++;
-							_diagnostics('Provide a title with in the <head> tags');
-						}
-						break;
-					// HTML
-					case (/<html/.test(el) && !/lang=(?:.*?[a-z].*?)"/i.test(el)):
-						problems++;
-						_diagnostics('Provide a language with lang=""');
-						break;
-					default:
-						break;
-				}
+							_diagnostics(m, 'Provide a text with in the <title> tags');
+						} 
+					}
+					break;
+				// HTML
+				case (/<html/i.test(el) && !/lang=(?:.*?[a-z].*?)"/i.test(el)):
+					problems++;
+					_diagnostics(m,'Provide a language with lang=""');
+					break;
+				default:
+					break;
 			}
-		});
-
-		async function _diagnostics(diagnosticsMessage: string) {
-			let diagnosic: Diagnostic = {
-				severity: DiagnosticSeverity.Warning,
-				range: {
-					start: textDocument.positionAt(m.index),
-					end: textDocument.positionAt(m.index + m[0].length)
-				},
-				message: diagnosticsMessage,
-				source: 'web accessibility'
-			};
-			
-			diagnostics.push(diagnosic);
-		}		
+		}
 	}
+
+	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string) {
+		let diagnosic: Diagnostic = {
+			severity: DiagnosticSeverity.Warning,
+			range: {
+				start: textDocument.positionAt(regEx.index),
+				end: textDocument.positionAt(regEx.index + regEx[0].length)
+			},
+			message: diagnosticsMessage,
+			source: 'web accessibility'
+		};
+		
+		diagnostics.push(diagnosic);
+	}		
 
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
-
-// async function problemsRecognition(el: string) {
-	
-// }
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode

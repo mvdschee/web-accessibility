@@ -1,4 +1,10 @@
 # CHANGELOG
+## Version 0.1.2
+* Removed foreach loop
+* Moved `_diagnostics` from while loop
+* Better Regex patterns
+* Added Regex for `<title>`, multi-line `<head>`, multi-line `<a>`
+
 ## Version 0.1.1
 * Moved RegEx patterns to Patterns.ts
 * Refactored RegEx to be more readable
