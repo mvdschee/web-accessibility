@@ -5,6 +5,7 @@
 	"version": "0.1.2",
 	"publisher": "MaxvanderSchee",
 	"repository": "https://github.com/mvdschee/web-accessibility",
+	"icon": "a11y-icon.png",
 	"engines": {
 		"vscode": "^1.25.0"
 	},
