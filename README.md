@@ -1,29 +1,31 @@
 # Web Accessibility Extension - Visual Studio Code
-This extension helps you with coding HTML that allows users with visual disabilities to browse your website/application with more ease.
+### So I heard you wanted to write more accessible websites? Well, you came to the right Extension!
+> Although this extension will help you write better Web Accessible applications/websites is only based on your code, which means it can't cover the full spectrum of Web Accessibility. 
 
-## Features
-The extension searches through your HTML for Web Accessibility code errors.
-If an error is found, the error is underlined, and a suggestion is given.
+## ✨Features
+![](./web-accessibility.gif)
 
-**(Gif coming soon)**
+The extension can do the following for you:
+* Highlight elements that you should consider changing.
+* Give a hint what to change
 
-## Extension Settings
-This extension has the following settings:
-* `web-accessibility.enable`: enable/disable this extension
 
-## Known Issues
+## 🔒Extension Settings
+At this point, you can enable/disable the extension, which is not that amazing. 
+
+## 🐛Known Issues
 The following Issues will be dealt with soon.
 * `<a>` only removes error if text is right after the first tag.
 * More informing messages with links to resources.
 * Not all Web Accessibility errors implemented.
 
-## Release Notes
+## 📝Release Notes
 All notable changes to this project will be documented in the [Changelog](./CHANGELOG.md).
 
-## License
-This resource can be used freely if integrated or build upon in personal or commercial projects such as websites, web apps and web templates intended for sale. It is not allowed to take the resource "as-is" and sell it, redistribute, re-publish it, or sell "pluginized" versions of it. Free plugins built using this resource should have a visible mention and link to the original work. Always consider the licenses of all included libraries, scripts and images used.
+## 💚License
+Do what you want with the code it's MIT Licensed! 
 
-## Misc
+## 😄Misc
 
 Follow Me: [Medium](https://medium.com/@maxvanderschee), [GitHub](https://github.com/mvdschee), [Twitter](https://twitter.com/maxvanderschee)
 
