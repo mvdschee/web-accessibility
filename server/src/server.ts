@@ -127,73 +127,79 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 	
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		let el = m[0];
-		if (el != null) {
+		if (m != null) {
+			let el = m[0].slice(0, 5);
 			switch (true) {
 				// Div
-				case (/<div/i.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
-					problems++;
-					_diagnostics(m,'Use Semantic HTML5 or specify a WAI-ARIA role=""');
+				case (/<div/i.test(el)):
+					if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
+						problems++;
+						_diagnostics(m,'Use Semantic HTML5 or specify a WAI-ARIA role=""');
+					}
 					break;
 				// Span
-				case (/<span/i.test(el) && !/role=(?:.*?[a-z].*?)"/i.test(el)):
-					if (/<span(?:.+?)button(?:.+?)>/.test(el)) {
-						problems++;
-						_diagnostics(m,'Change to a <button>');
-					} else {
-						problems++;
-						_diagnostics(m,'Provide a WAI-ARIA role=""');
+				case (/<span/i.test(el)):
+					if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
+						if (/<span(?:.+?)button(?:.+?)>/.test(m[0])) {
+							problems++;
+							_diagnostics(m,'Change to a <button>');
+						} else {
+							problems++;
+							_diagnostics(m,'Provide a WAI-ARIA role=""');
+						}
 					}
 					break;
 				// Links
-				case (/<a/ig.test(el)):
-					if (!/<a(?:.+?)>(?:(|\s)[a-z]+?(|\s)+?)</ig.test(el)) {
+				case (/<a/i.test(el)):
+					let filteredString = m[0].replace(/<(?:\s|\S)+?>/ig, "");
+					if (!/(?:\S+?)/ig.test(filteredString)) {
 						problems++;
-						_diagnostics(m,'Provide a descriptive text right after <a href=""> and in between the tags');
+						_diagnostics(m,'Provide a descriptive text in between the tags');
 					}
 					break;
 				// Images
-				case (/<img/i.test(el) && !/alt=(?:.*?[a-z].*?)"/i.test(el)):
-					problems++;
-					_diagnostics(m,'Provide an alt="" text that describes the image');
+				case (/<img/i.test(el)):
+					if (!/alt=(?:.*?[a-z].*?)"/i.test(m[0])) {
+						problems++;
+						_diagnostics(m,'Provide an alt="" text that describes the image');
+					}
 					break;
 				// Head, title and meta
 				case (/<head/i.test(el)):
 					let metaRegEx: RegExpExecArray;
 					let titleRegEx: RegExpExecArray;
-					let oldIndex: number = m.index;
-					if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(el))) {	
-						m[0] = metaRegEx[0];
-						m.index = oldIndex + metaRegEx.index;
-						if (!/scalable=(?:\s+?yes)/i.test(el)) {
+					let oldRegEx: RegExpExecArray = m;
+					if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(oldRegEx[0]))) {	
+						metaRegEx.index = oldRegEx.index + metaRegEx.index;
+						if (!/scalable=(?:\s+?yes)/i.test(metaRegEx[0])) {
 							problems++;
-							_diagnostics(m,'Enable pinching to zoom with user-scalable=yes');
+							_diagnostics(metaRegEx,'Enable pinching to zoom with user-scalable=yes');
 						}
-						if (/maximum-scale=(?:\s+?1)/i.test(el)) {
+						if (/maximum-scale=(?:\s+?1)/i.test(metaRegEx[0])) {
 							problems++;
-							_diagnostics(m,'Avoid using maximum-scale=1');
+							_diagnostics(metaRegEx,'Avoid using maximum-scale=1');
 						}
 					}
-					if (!/<title>/i.test(el)) {
-						titleRegEx = /<head(?:|.+?)>/i.exec(el);
-						m[0] = titleRegEx[0];
-						m.index = oldIndex + titleRegEx.index;
+					if (!/<title>/i.test(oldRegEx[0])) {
+						titleRegEx = /<head(?:|.+?)>/i.exec(oldRegEx[0]);
+						titleRegEx.index = oldRegEx.index;
 						problems++;
-						_diagnostics(m,'Provide a title with in the <head> tags');
+						_diagnostics(titleRegEx,'Provide a title with in the <head> tags');
 					} else {
-						titleRegEx = /<title>(?:|.*?[a-z].*?|\s+?)<\/title>/i.exec(el);
+						titleRegEx = /<title>(?:|.*?[a-z].*?|\s+?)<\/title>/i.exec(oldRegEx[0]);
 						if (/>(?:|\s+?)</i.test(titleRegEx[0])) {
-							m[0] = titleRegEx[0];
-							m.index = oldIndex + titleRegEx.index;
+							titleRegEx.index = oldRegEx.index + titleRegEx.index;
 							problems++;
-							_diagnostics(m, 'Provide a text with in the <title> tags');
+							_diagnostics(titleRegEx, 'Provide a text with in the <title> tags');
 						} 
 					}
 					break;
 				// HTML
-				case (/<html/i.test(el) && !/lang=(?:.*?[a-z].*?)"/i.test(el)):
-					problems++;
-					_diagnostics(m,'Provide a language with lang=""');
+				case (/<html/i.test(el)):
+					if (!/lang=(?:.*?[a-z].*?)"/i.test(m[0])) {
+						problems++;
+						_diagnostics(m,'Provide a language with lang=""');
+					}
 					break;
 				default:
 					break;

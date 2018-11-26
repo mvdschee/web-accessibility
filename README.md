@@ -15,7 +15,6 @@ At this point, you can enable/disable the extension, which is not that amazing.
 
 ## 🐛Known Issues
 The following Issues will be dealt with soon.
-* `<a>` only removes error if text is right after the first tag.
 * More informing messages with links to resources.
 * Not all Web Accessibility errors implemented.
 
