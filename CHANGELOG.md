@@ -1,7 +1,7 @@
 # CHANGELOG
 ## Version 0.1.3
-* Fixed issue with filter tag being flag on multiple patterns
-* Fixed issue with multi flag within `<head>` element
+* Fixed issue with filter tag being flagged on multiple patterns
+* Fixed issue with multi-flag within `<head>` element
 * Fixed issue with `<a>` not being flagged correct
 
 ## Version 0.1.2

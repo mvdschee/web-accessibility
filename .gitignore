@@ -4,3 +4,5 @@ client/server
 .vscode-test
 *.vsix
 package-lock.json
+server/package-lock.json
+client/package-lock.json
