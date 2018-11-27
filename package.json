@@ -10,7 +10,16 @@
 		"vscode": "^1.25.0"
 	},
 	"categories": [
-		"Linters"
+		"Linters",
+		"Formatters"
+	],
+	"keywords": [
+		"web accessibility",
+		"a11y",
+		"wai-aria",
+		"wai",
+		"accessibility",
+		"multi-root ready"
 	],
 	"activationEvents": [
 		"onLanguage:html"
