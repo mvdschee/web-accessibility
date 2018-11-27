@@ -1,7 +1,7 @@
 # Web Accessibility Extension - Visual Studio Code
 [![The MIT License](https://flat.badgen.net/badge/license/MIT/orange)](http://opensource.org/licenses/MIT)
-[![GitHub](https://flat.badgen.net/github/release/idleberg/vscode-badges)](https://github.com/mvdschee/web-accessibility/releases)
-[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/installs-short/idleberg.badges.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=MaxvanderSchee.web-accessibility)
+[![GitHub](https://flat.badgen.net/github/release/mvdschee/web-accessibility)](https://github.com/mvdschee/web-accessibility/releases)
+[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/installs-short/MaxvanderSchee.web-accessibility.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=MaxvanderSchee.web-accessibility)
 
 ### So I heard you wanted to write more accessible websites? Well, you came to the right Extension!
 > Although this extension will help you write better Web Accessible applications/websites is only based on your code, which means it can't cover the full spectrum of Web Accessibility. 
