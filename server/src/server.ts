@@ -122,71 +122,64 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 	
 	while ((m = Pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		connection.console.log(problems.toString());
 		if (m != null) {
 			let el = m[0].slice(0, 5);
 			switch (true) {
 				// Div
 				case (/<div/i.test(el)):
-					connection.console.log("div");
-					{
-						let result = await Pattern.validateDiv(m).then(response => response).catch();
-						problems + result.numb;
-						_diagnostics(result.meta, result.mess);
+					let resultDiv = await Pattern.validateDiv(m);
+					if (resultDiv) {
+						problems++;
+						_diagnostics(resultDiv.meta, resultDiv.mess);
 					}
 					break;
 				// Span
 				case (/<span/i.test(el)):
-					connection.console.log("span");
-					{
-						let result = await Pattern.validateSpan(m).then(response => response).catch();
-						problems + result.numb;
-						_diagnostics(result.meta, result.mess);
+					let resultSpan = await Pattern.validateSpan(m);
+					if (resultSpan) {
+						problems++;
+						_diagnostics(resultSpan.meta, resultSpan.mess);
 					}
 					break;
 				// Links
-				case (/<a/i.test(el)):
-					connection.console.log("a");
-					{
-						let result = await Pattern.validateA(m).then(response => response).catch();
-						problems + result.numb;
+				case (/<a\s/i.test(el)):
+					let result = await Pattern.validateA(m);
+					if (result) {
+						problems++;
 						_diagnostics(result.meta, result.mess);
 					}
 					break;
 				// Images
 				case (/<img/i.test(el)):
-					connection.console.log("img");
-					{
-						let result = await Pattern.validateImg(m).then(response => response).catch();
-						problems + result.numb;
-						_diagnostics(result.meta, result.mess);
+					let resultImg = await Pattern.validateImg(m);
+					if (resultImg) {
+						problems++;
+						_diagnostics(resultImg.meta, resultImg.mess);
 					}
 					break;
 				// Head, title and meta
 				case (/<head/i.test(el)):
-					connection.console.log("head");
-					{
 						if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
-							connection.console.log("meta");
-							let result = await Pattern.validateMeta(m).then(response => response).catch();
-							problems + result.numb;
-							_diagnostics(result.meta, result.mess);
+							let resultMeta = await Pattern.validateMeta(m);
+							if (resultMeta) {
+								problems++;
+								_diagnostics(resultMeta.meta, resultMeta.mess);
+							}
 						}
 						if (!/<title>/i.test(m[0]) || /<title>/i.test(m[0])) {
-							connection.console.log("title");
-							let result = await Pattern.validateTitle(m).then(response => response).catch();
-							problems + result.numb;
-							_diagnostics(result.meta, result.mess);
+							let resultTitle = await Pattern.validateTitle(m);
+							if (resultTitle) {
+								problems++;
+								_diagnostics(resultTitle.meta, resultTitle.mess);
+							}
 						}
-					}
 					break;
 				// HTML
 				case (/<html/i.test(el)):
-					connection.console.log("html");
-					{
-						let result = await Pattern.validateHtml(m).then(response => response).catch();
-						problems + result.numb;
-						_diagnostics(result.meta, result.mess);
+					let resultHtml = await Pattern.validateHtml(m);
+					if (resultHtml) {
+						problems++;
+						_diagnostics(resultHtml.meta, resultHtml.mess);
 					}
 					break;
 				default:
