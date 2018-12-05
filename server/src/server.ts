@@ -143,10 +143,10 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 					break;
 				// Links
 				case (/<a\s/i.test(el)):
-					let result = await Pattern.validateA(m);
-					if (result) {
+					let resultA = await Pattern.validateA(m);
+					if (resultA) {
 						problems++;
-						_diagnostics(result.meta, result.mess);
+						_diagnostics(resultA.meta, resultA.mess);
 					}
 					break;
 				// Images
@@ -159,20 +159,20 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 					break;
 				// Head, title and meta
 				case (/<head/i.test(el)):
-						if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
-							let resultMeta = await Pattern.validateMeta(m);
-							if (resultMeta) {
-								problems++;
-								_diagnostics(resultMeta.meta, resultMeta.mess);
-							}
+					if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
+						let resultMeta = await Pattern.validateMeta(m);
+						if (resultMeta) {
+							problems++;
+							_diagnostics(resultMeta.meta, resultMeta.mess);
 						}
-						if (!/<title>/i.test(m[0]) || /<title>/i.test(m[0])) {
-							let resultTitle = await Pattern.validateTitle(m);
-							if (resultTitle) {
-								problems++;
-								_diagnostics(resultTitle.meta, resultTitle.mess);
-							}
+					}
+					if (!/<title>/i.test(m[0]) || /<title>/i.test(m[0])) {
+						let resultTitle = await Pattern.validateTitle(m);
+						if (resultTitle) {
+							problems++;
+							_diagnostics(resultTitle.meta, resultTitle.mess);
 						}
+					}
 					break;
 				// HTML
 				case (/<html/i.test(el)):
@@ -180,6 +180,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 					if (resultHtml) {
 						problems++;
 						_diagnostics(resultHtml.meta, resultHtml.mess);
+					}
+					break;
+				// HTML
+				case (/<inpu/i.test(el)):
+					let resultInput = await Pattern.validateInput(m);
+					if (resultInput) {
+						problems++;
+						_diagnostics(resultInput.meta, resultInput.mess);
 					}
 					break;
 				default:
