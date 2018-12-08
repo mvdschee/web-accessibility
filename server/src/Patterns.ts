@@ -47,13 +47,17 @@ export async function validateSpan(m: RegExpExecArray) {
 }
 
 export async function validateA(m: RegExpExecArray) {
+	let aRegEx: RegExpExecArray;
+	let oldRegEx: RegExpExecArray = m;
 	let filteredString = m[0].replace(/<(?:\s|\S)+?>/ig, "");
-	if (!/(?:\S+?)/ig.test(filteredString)) {
-		return {
-			meta: m,
-			mess: 'Provide a descriptive text in between the tags'
-		};
-	}
+		if (!/(?:\S+?)/ig.test(filteredString)) {
+			aRegEx = /<a(?:.)+?>/i.exec(oldRegEx[0]);
+			aRegEx.index = oldRegEx.index;
+			return {
+				meta: aRegEx,
+				mess: 'Provide a descriptive text in between the tags'
+			};
+		}
 }
 
 export async function validateImg(m: RegExpExecArray) {
