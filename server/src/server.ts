@@ -157,6 +157,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						_diagnostics(resultImg.meta, resultImg.mess);
 					}
 					break;
+				// input
+				case (/<inpu/i.test(el)):
+					let resultInput = await Pattern.validateInput(m);
+					if (resultInput) {
+						problems++;
+						_diagnostics(resultInput.meta, resultInput.mess);
+					}
+					break;
 				// Head, title and meta
 				case (/<head/i.test(el)):
 					if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
@@ -180,14 +188,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 					if (resultHtml) {
 						problems++;
 						_diagnostics(resultHtml.meta, resultHtml.mess);
-					}
-					break;
-				// HTML
-				case (/<inpu/i.test(el)):
-					let resultInput = await Pattern.validateInput(m);
-					if (resultInput) {
-						problems++;
-						_diagnostics(resultInput.meta, resultInput.mess);
 					}
 					break;
 				default:

@@ -1,4 +1,9 @@
 # CHANGELOG
+## Version 0.2.0
+* Added Regex for `<input>`
+* Refactored case handeling
+* Moved pattern case handeling to Patterns.ts
+
 ## Version 0.1.3
 * Fixed issue with filter tag being flagged on multiple patterns
 * Fixed issue with multi-flag within `<head>` element
