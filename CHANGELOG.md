@@ -1,8 +1,12 @@
 # CHANGELOG
+## Version 0.2.1
+* Changed the flag for `<a>`. It had way too many wavy lines!
+* Remove typo from changelog
+
 ## Version 0.2.0
 * Added Regex for `<input>`
-* Refactored case handeling
-* Moved pattern case handeling to Patterns.ts
+* Refactored case handling
+* Moved pattern case handling to `Patterns.ts`
 
 ## Version 0.1.3
 * Fixed issue with filter tag being flagged on multiple patterns
