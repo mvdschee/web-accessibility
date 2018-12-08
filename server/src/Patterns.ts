@@ -117,91 +117,48 @@ export async function validateHtml(m: RegExpExecArray) {
 }
 
 export async function validateInput(m: RegExpExecArray) {
-	// let data = {
-	// 	meta: m,
-	// 	mess: null
-	// };
-
-	const error = {
-		'id': false,
-		'ariaLabel': false,
-		'ariaLabelledBy': false,
-		'role': false,
-	};
-	
-	// id/for
-	const id = () => {
-		// id
-			// true = check "for"
-					// true = break;
-					// false = default
-			// false = default
-		if (/id=(?:.*?[a-z].*?)"/i.test(m[0])) {
-			let idValue = /id="(.*?[a-z].*?)"/i.exec(m[0])[1];
-			let pattern: RegExp = new RegExp('for="'+ idValue +'"', 'ig');
-			if (pattern.test(m.input)) {
-				error.id = true;
-				// data = {
-				// 	meta: m,
-				// 	mess: 'Provide an aria-label=""'
-				// };
-			}		
-		}
-	};
-	// aria-label
-	const ariaLabel = () => {
-		// aria-label
-			// true = break;
-			// false = default
-		if (/aria-label=(?:.*?[a-z].*?)"/i.test(m[0])){
-			error.ariaLabel = true;
-		}
-	};
-	// aria-labelledby/id
-	const ariaLabelledBy = () => {
-		// aria-labelledby
-			// true = check "id"
-				// true = break;
-				// false = add "id" 
-			// false = default
-		error.ariaLabelledBy = false;
-	};
-	// role combobox/label around
-	const role = () => { 
-		// role
-			// true = check <label>
-				// false = set label
-				// true = break;
-			// false = default
-		error.role = false;
-	};
-
-	// execute all checks
-	id();
-	ariaLabel();
-	ariaLabelledBy();
-	role();
-
-	// if (data.mess !== null) {
-	// 	return data;
-	// }
-
 	// Give message based on found error 
 	switch (true) {
-		case error.id:
+		case (/aria-label=/i.test(m[0])):
+			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])){
+				break;
+			} else {
+				return {
+					meta: m,
+					mess: 'Provide an text with in the aria-label=""'
+				};
+			}
+		case (/id=/i.test(m[0])):
+			if (/id="(?:.*?[a-z].*?)"/i.test(m[0])){
+					let idValue = /id="(.*?[a-z].*?)"/i.exec(m[0])[1];
+					let pattern: RegExp = new RegExp('for="' + idValue + '"', 'i');
+					if (pattern.test(m.input)) {
+						break;
+					} else {
+						return {
+							meta: m,
+							mess: 'Provide an aria-label="" or a <label for="">'
+						};	
+					}		
+				} else {
+					return {
+						meta: m,
+						mess: 'Provide an aria-label=""'
+					};
+				}
+		case (/aria-labelledby=/i.test(m[0])):
+			if (!/aria-labelledby="(?:(?![a-z]*?)|\s|)"/i.test(m[0])) {
+				// TODO: needs to check elements with the same value.
+				break;
+			} else {
+				return {
+					meta: m,
+					mess: 'Provide an id with in the aria-labelledby=""'
+				};
+			}
+		case (/role=/i.test(m[0])):
+			// TODO: needs to check if <label> is surrounded.
 			break;
-		case error.ariaLabel:
-			break;
-		case error.ariaLabelledBy:
-			return {
-				meta: m,
-				mess: 'Provide an aria-label=""'
-			};
-		case error.role:
-			return {
-				meta: m,
-				mess: 'Provide an aria-label=""'
-			};
 		default:
 			return {
 				meta: m,
