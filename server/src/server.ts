@@ -12,7 +12,7 @@ import {
 	InitializeParams,
 	DidChangeConfigurationNotification
 } from 'vscode-languageserver';
-import { pattern } from './Patterns';
+import * as Pattern from './Patterns';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -24,7 +24,6 @@ let documents: TextDocuments = new TextDocuments();
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-// let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -33,10 +32,6 @@ connection.onInitialize((params: InitializeParams) => {
 	// If not, we will fall back using global settings
 	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
 	hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
-	// hasDiagnosticRelatedInformationCapability =
-	// 	!!(capabilities.textDocument &&
-	// 	capabilities.textDocument.publishDiagnostics &&
-	// 	capabilities.textDocument.publishDiagnostics.relatedInformation);
 
 	return {
 		capabilities: {
@@ -119,86 +114,80 @@ documents.onDidChangeContent(change => {
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	//Get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
-
+	
 	// The validator creates diagnostics for all errors and more
 	let text = textDocument.getText();
-	let m: RegExpExecArray | null;
 	let problems = 0;
+	let m: RegExpExecArray | null;
 	let diagnostics: Diagnostic[] = [];
 	
-	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+	while ((m = Pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		if (m != null) {
 			let el = m[0].slice(0, 5);
 			switch (true) {
 				// Div
 				case (/<div/i.test(el)):
-					if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
+					let resultDiv = await Pattern.validateDiv(m);
+					if (resultDiv) {
 						problems++;
-						_diagnostics(m,'Use Semantic HTML5 or specify a WAI-ARIA role=""');
+						_diagnostics(resultDiv.meta, resultDiv.mess);
 					}
 					break;
 				// Span
 				case (/<span/i.test(el)):
-					if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
-						if (/<span(?:.+?)button(?:.+?)>/.test(m[0])) {
-							problems++;
-							_diagnostics(m,'Change to a <button>');
-						} else {
-							problems++;
-							_diagnostics(m,'Provide a WAI-ARIA role=""');
-						}
+					let resultSpan = await Pattern.validateSpan(m);
+					if (resultSpan) {
+						problems++;
+						_diagnostics(resultSpan.meta, resultSpan.mess);
 					}
 					break;
 				// Links
-				case (/<a/i.test(el)):
-					let filteredString = m[0].replace(/<(?:\s|\S)+?>/ig, "");
-					if (!/(?:\S+?)/ig.test(filteredString)) {
+				case (/<a\s/i.test(el)):
+					let resultA = await Pattern.validateA(m);
+					if (resultA) {
 						problems++;
-						_diagnostics(m,'Provide a descriptive text in between the tags');
+						_diagnostics(resultA.meta, resultA.mess);
 					}
 					break;
 				// Images
 				case (/<img/i.test(el)):
-					if (!/alt=(?:.*?[a-z].*?)"/i.test(m[0])) {
+					let resultImg = await Pattern.validateImg(m);
+					if (resultImg) {
 						problems++;
-						_diagnostics(m,'Provide an alt="" text that describes the image');
+						_diagnostics(resultImg.meta, resultImg.mess);
+					}
+					break;
+				// input
+				case (/<inpu/i.test(el)):
+					let resultInput = await Pattern.validateInput(m);
+					if (resultInput) {
+						problems++;
+						_diagnostics(resultInput.meta, resultInput.mess);
 					}
 					break;
 				// Head, title and meta
 				case (/<head/i.test(el)):
-					let metaRegEx: RegExpExecArray;
-					let titleRegEx: RegExpExecArray;
-					let oldRegEx: RegExpExecArray = m;
-					if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(oldRegEx[0]))) {	
-						metaRegEx.index = oldRegEx.index + metaRegEx.index;
-						if (!/scalable=(?:\s+?yes)/i.test(metaRegEx[0])) {
+					if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
+						let resultMeta = await Pattern.validateMeta(m);
+						if (resultMeta) {
 							problems++;
-							_diagnostics(metaRegEx,'Enable pinching to zoom with user-scalable=yes');
-						}
-						if (/maximum-scale=(?:\s+?1)/i.test(metaRegEx[0])) {
-							problems++;
-							_diagnostics(metaRegEx,'Avoid using maximum-scale=1');
+							_diagnostics(resultMeta.meta, resultMeta.mess);
 						}
 					}
-					if (!/<title>/i.test(oldRegEx[0])) {
-						titleRegEx = /<head(?:|.+?)>/i.exec(oldRegEx[0]);
-						titleRegEx.index = oldRegEx.index;
-						problems++;
-						_diagnostics(titleRegEx,'Provide a title with in the <head> tags');
-					} else {
-						titleRegEx = /<title>(?:|.*?[a-z].*?|\s+?)<\/title>/i.exec(oldRegEx[0]);
-						if (/>(?:|\s+?)</i.test(titleRegEx[0])) {
-							titleRegEx.index = oldRegEx.index + titleRegEx.index;
+					if (!/<title>/i.test(m[0]) || /<title>/i.test(m[0])) {
+						let resultTitle = await Pattern.validateTitle(m);
+						if (resultTitle) {
 							problems++;
-							_diagnostics(titleRegEx, 'Provide a text with in the <title> tags');
-						} 
+							_diagnostics(resultTitle.meta, resultTitle.mess);
+						}
 					}
 					break;
 				// HTML
 				case (/<html/i.test(el)):
-					if (!/lang=(?:.*?[a-z].*?)"/i.test(m[0])) {
+					let resultHtml = await Pattern.validateHtml(m);
+					if (resultHtml) {
 						problems++;
-						_diagnostics(m,'Provide a language with lang=""');
+						_diagnostics(resultHtml.meta, resultHtml.mess);
 					}
 					break;
 				default:
@@ -220,7 +209,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 		
 		diagnostics.push(diagnosic);
 	}		
-
+	
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
