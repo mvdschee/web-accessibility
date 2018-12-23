@@ -12,31 +12,22 @@ import {
 	InitializeParams,
 	DidChangeConfigurationNotification
 } from 'vscode-languageserver';
-import * as Pattern from './Patterns';
+import * as Pattern from './patterns';
 
-// Create a connection for the server. The connection uses Node's IPC as a transport.
-// Also include all preview / proposed LSP features.
 let connection = createConnection(ProposedFeatures.all);
-
-// Create a simple text document manager. The text document manager
-// supports full document sync only
 let documents: TextDocuments = new TextDocuments();
-
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
 
-	// Does the client support the `workspace/configuration` request?
-	// If not, we will fall back using global settings
 	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
 	hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
 
 	return {
 		capabilities: {
 			textDocumentSync: documents.syncKind,
-			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: false
 			}
@@ -46,7 +37,6 @@ connection.onInitialize((params: InitializeParams) => {
 
 connection.onInitialized(() => {
 	if (hasConfigurationCapability) {
-		// Register for all configuration changes.
 		connection.client.register(
 			DidChangeConfigurationNotification.type,
 			undefined
@@ -59,21 +49,16 @@ connection.onInitialized(() => {
 	}
 });
 
-// The server settings
 interface ServerSettings {
 	maxNumberOfProblems: number;
 }
 
-// The global settings, used when the `workspace/configuration` request is not supported by the client.
 const defaultSettings: ServerSettings = { maxNumberOfProblems: 1000 };
 let globalSettings: ServerSettings = defaultSettings;
-
-// Cache the settings of all open documents
 let documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
 
 connection.onDidChangeConfiguration(change => {
 	if (hasConfigurationCapability) {
-		// Reset all cached document settings
 		documentSettings.clear();
 	} else {
 		globalSettings = <ServerSettings>(
@@ -81,7 +66,6 @@ connection.onDidChangeConfiguration(change => {
 		);
 	}
 
-	// Revalidate all open text documents
 	documents.all().forEach(validateTextDocument);
 });
 
@@ -100,22 +84,19 @@ function getDocumentSettings(resource: string): Thenable<ServerSettings> {
 	return result;
 }
 
-// Only keep settings for open documents
 documents.onDidClose(e => {
 	documentSettings.delete(e.document.uri);
+	connection.sendDiagnostics({ uri: e.document.uri, diagnostics: [] });
 });
 
-// The content of a HTML document has changed. This event is emitted
-// when the HTML document first opened or when its content has changed.
+
 documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
+// Only this part is interesting. 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-	//Get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
-	
-	// The validator creates diagnostics for all errors and more
 	let text = textDocument.getText();
 	let problems = 0;
 	let m: RegExpExecArray | null;
@@ -209,19 +190,9 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 		
 		diagnostics.push(diagnosic);
 	}		
-	
-	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
-connection.onDidChangeWatchedFiles(_change => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
-});
-
-// Make the HTML document manager listen on the connection
-// for open, change and close text document events
 documents.listen(connection);
 
-// Listen on the connection
 connection.listen();
