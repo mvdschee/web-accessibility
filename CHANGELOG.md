@@ -1,4 +1,8 @@
 # CHANGELOG
+## Version 0.2.2
+* If the document gets closed, problems disappear.
+* Removed all comments that had no real function.
+
 ## Version 0.2.1
 * Changed the flag for `<a>`. It had way too many wavy lines!
 * Remove typo from changelog

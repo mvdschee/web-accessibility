@@ -121,7 +121,6 @@ export async function validateHtml(m: RegExpExecArray) {
 }
 
 export async function validateInput(m: RegExpExecArray) {
-	// Give message based on found error 
 	switch (true) {
 		case (/aria-label=/i.test(m[0])):
 			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])){
