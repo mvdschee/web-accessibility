@@ -18,8 +18,35 @@ const patterns: string[] = [
 	"<head(?:.|)+?>(?:(?:\\s|\\S)+?(?=<\/head>))<\/head>",
 	"<html(?:.)+?>"
 ];
-
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
+
+const nonDescriptiveAlts = [
+	"alt=\"image\"",
+	"alt=\"picture\"",
+	"alt=\"logo\"",
+	"alt=\"icon\"",
+	"alt=\"graphic\"",
+	"alt=\"an image\"",
+	"alt=\"a picture\"",
+	"alt=\"a logo\"",
+	"alt=\"an icon\"",
+	"alt=\"a graphic\"",
+];
+const nonDescriptiveAltsTogether = new RegExp(nonDescriptiveAlts.join("|"), "i");
+
+const badAltStarts = [
+	"alt=\"image of",
+	"alt=\"picture of",
+	"alt=\"logo of",
+	"alt=\"icon of",
+	"alt=\"graphic of",
+	"alt=\"an image of",
+	"alt=\"a picture of",
+	"alt=\"a logo of",
+	"alt=\"an icon of",
+	"alt=\"a graphic of",
+];
+const badAltStartsTogether = new RegExp(badAltStarts.join("|"), "i");
 
 export async function validateDiv(m: RegExpExecArray) {
 	if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
@@ -61,10 +88,31 @@ export async function validateA(m: RegExpExecArray) {
 }
 
 export async function validateImg(m: RegExpExecArray) {
-	if (!/alt=(?:.*?[a-z].*?)"/i.test(m[0])) {
+
+	// Ordered by approximate frequency of the issue
+	if ((!/alt="(?:.*?[a-z].*?)"/i.test(m[0])) && (!/alt=""/i.test(m[0]))) {
 		return {
 			meta: m,
-			mess: 'Provide an alt="" text that describes the image'
+			mess: 'Provide an alt text that describes the image, or alt="" if image is purely decorative'
+		};
+	}
+	if (nonDescriptiveAltsTogether.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Alt attribute must be specifically descriptive'
+		};
+	}
+	if (badAltStartsTogether.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Alt text should not begin with "image of" or similar phrasing'
+		};
+	}
+	// Most screen readers cut off alt text at 125 characters.
+	if ((/alt="(?:.*?[a-z].*.{125,}?)"/i.test(m[0]))) {
+		return {
+			meta: m,
+			mess: 'Alt text is too long'
 		};
 	}
 }
@@ -141,8 +189,8 @@ export async function validateInput(m: RegExpExecArray) {
 						return {
 							meta: m,
 							mess: 'Provide an aria-label="" or a <label for="">'
-						};	
-					}		
+						};
+					}
 				} else {
 					return {
 						meta: m,
