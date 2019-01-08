@@ -1,4 +1,4 @@
-/*! Patterns.ts
+/*! patterns.ts
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 import {
@@ -6,6 +6,7 @@ import {
 	ProposedFeatures
 } from 'vscode-languageserver';
 
+// connection is used for debuging > connection.console.log();
 let connection = createConnection(ProposedFeatures.all);
 
 // Order based om most common types first
@@ -15,17 +16,45 @@ const patterns: string[] = [
 	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
 	"<img(?:.)+?>",
 	"<input(?:.)+?>",
-	"<head(?:.|)+?>(?:(?:\\s|\\S)+?(?=<\/head>))<\/head>",
-	"<html(?:.)+?>"
+	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
+	"<html(?:.)+?>",
+	"tabindex=\"(?:.)+?\""
 ];
-
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
+
+const nonDescriptiveAlts: string[] = [
+	"alt=\"image\"",
+	"alt=\"picture\"",
+	"alt=\"logo\"",
+	"alt=\"icon\"",
+	"alt=\"graphic\"",
+	"alt=\"an image\"",
+	"alt=\"a picture\"",
+	"alt=\"a logo\"",
+	"alt=\"an icon\"",
+	"alt=\"a graphic\"",
+];
+const nonDescriptiveAltsTogether = new RegExp(nonDescriptiveAlts.join("|"), "i");
+
+const badAltStarts: string[] = [
+	"alt=\"image of",
+	"alt=\"picture of",
+	"alt=\"logo of",
+	"alt=\"icon of",
+	"alt=\"graphic of",
+	"alt=\"an image of",
+	"alt=\"a picture of",
+	"alt=\"a logo of",
+	"alt=\"an icon of",
+	"alt=\"a graphic of",
+];
+const badAltStartsTogether = new RegExp(badAltStarts.join("|"), "i");
 
 export async function validateDiv(m: RegExpExecArray) {
 	if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
 		return {
 			meta: m,
-			mess: 'Use Semantic HTML5 or specify a WAI-ARIA role=""'
+			mess: 'Use Semantic HTML5 or specify a WAI-ARIA role [role=""]'
 		};
 	}
 }
@@ -35,12 +64,12 @@ export async function validateSpan(m: RegExpExecArray) {
 		if (/<span(?:.+?)button(?:.+?)>/.test(m[0])) {
 			return {
 				meta: m,
-				mess: 'Change to a <button>'
+				mess: 'Change the span to a <button>'
 			};
 		} else {
 			return {
 				meta: m,
-				mess: 'Provide a WAI-ARIA role=""'
+				mess: 'Provide a WAI-ARIA role [role=""]'
 			};
 		}
 	}
@@ -61,10 +90,31 @@ export async function validateA(m: RegExpExecArray) {
 }
 
 export async function validateImg(m: RegExpExecArray) {
-	if (!/alt=(?:.*?[a-z].*?)"/i.test(m[0])) {
+
+	// Ordered by approximate frequency of the issue
+	if ((!/alt="(?:.*?[a-z].*?)"/i.test(m[0])) && (!/alt=""/i.test(m[0]))) {
 		return {
 			meta: m,
-			mess: 'Provide an alt="" text that describes the image'
+			mess: 'Provide an alt text that describes the image, or alt="" if image is purely decorative'
+		};
+	}
+	if (nonDescriptiveAltsTogether.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Alt attribute must be specifically descriptive'
+		};
+	}
+	if (badAltStartsTogether.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Alt text should not begin with "image of" or similar phrasing'
+		};
+	}
+	// Most screen readers cut off alt text at 125 characters.
+	if ((/alt="(?:.*?[a-z].*.{125,}?)"/i.test(m[0]))) {
+		return {
+			meta: m,
+			mess: 'Alt text is too long'
 		};
 	}
 }
@@ -77,13 +127,13 @@ export async function validateMeta(m: RegExpExecArray) {
 		if (!/scalable=(?:\s+?yes)/i.test(metaRegEx[0])) {
 			return {
 				meta: metaRegEx,
-				mess: 'Enable pinching to zoom with user-scalable=yes'
+				mess: 'Enable pinching to zoom [user-scalable=yes]'
 			};
 		}
 		if (/maximum-scale=(?:\s+?1)/i.test(metaRegEx[0])) {
 			return {
 				meta: metaRegEx,
-				mess: 'Avoid using maximum-scale=1'
+				mess: 'Avoid using [maximum-scale=1]'
 			};
 		}
 	}
@@ -115,7 +165,7 @@ export async function validateHtml(m: RegExpExecArray) {
 	if (!/lang=(?:.*?[a-z].*?)"/i.test(m[0])) {
 		return {
 			meta: m,
-			mess: 'Provide a language within lang=""'
+			mess: 'Provide a language [lang=""]'
 		};
 	}
 }
@@ -128,7 +178,7 @@ export async function validateInput(m: RegExpExecArray) {
 			} else {
 				return {
 					meta: m,
-					mess: 'Provide an text with in the aria-label=""'
+					mess: 'Provide an text with in the aria label [aria-label=""]'
 				};
 			}
 		case (/id=/i.test(m[0])):
@@ -140,13 +190,13 @@ export async function validateInput(m: RegExpExecArray) {
 					} else {
 						return {
 							meta: m,
-							mess: 'Provide an aria-label="" or a <label for="">'
-						};	
-					}		
+							mess: 'Provide an aria label [aria-label=""] or a <label for="">'
+						};
+					}
 				} else {
 					return {
 						meta: m,
-						mess: 'Provide an aria-label=""'
+						mess: 'Provide an aria label [aria-label=""]'
 					};
 				}
 		case (/aria-labelledby=/i.test(m[0])):
@@ -156,7 +206,7 @@ export async function validateInput(m: RegExpExecArray) {
 			} else {
 				return {
 					meta: m,
-					mess: 'Provide an id with in the aria-labelledby=""'
+					mess: 'Provide an id with in the aria labelledby [aria-labelledby=""]'
 				};
 			}
 		case (/role=/i.test(m[0])):
@@ -165,7 +215,17 @@ export async function validateInput(m: RegExpExecArray) {
 		default:
 			return {
 				meta: m,
-				mess: 'Provide an aria-label=""'
+				mess: 'Provide an aria label [aria-label=""]'
 			};
+	}
+}
+
+export async function validateTab(m: RegExpExecArray) {
+	connection.console.log(m[0]);
+	if (!/tabindex="(?:0|-1)"/i.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'A tabindex greater than 0 interferes with the focus order. Try restructuring the HTML'
+		};
 	}
 }

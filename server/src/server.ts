@@ -28,9 +28,6 @@ connection.onInitialize((params: InitializeParams) => {
 	return {
 		capabilities: {
 			textDocumentSync: documents.syncKind,
-			completionProvider: {
-				resolveProvider: false
-			}
 		}
 	};
 });
@@ -94,14 +91,14 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
-// Only this part is interesting. 
+// Only this part is interesting.
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let settings = await getDocumentSettings(textDocument.uri);
 	let text = textDocument.getText();
 	let problems = 0;
 	let m: RegExpExecArray | null;
 	let diagnostics: Diagnostic[] = [];
-	
+
 	while ((m = Pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		if (m != null) {
 			let el = m[0].slice(0, 5);
@@ -171,6 +168,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						_diagnostics(resultHtml.meta, resultHtml.mess);
 					}
 					break;
+				// Tabindex
+				case (/tabin/i.test(el)):
+					let resultTab = await Pattern.validateTab(m);
+					if (resultTab) {
+						problems++;
+						_diagnostics(resultTab.meta, resultTab.mess);
+					}
+					break;
 				default:
 					break;
 			}
@@ -187,9 +192,9 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 			message: diagnosticsMessage,
 			source: 'web accessibility'
 		};
-		
+
 		diagnostics.push(diagnosic);
-	}		
+	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 

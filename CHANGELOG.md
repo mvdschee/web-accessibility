@@ -1,4 +1,11 @@
 # CHANGELOG
+## Version 0.2.3
+* Enhancement [#6](https://github.com/mvdschee/web-accessibility/issues/6) by [Liz Certa (@ecerta)](https://github.com/ecerta): adds more checks for alt text, removes whitespace, fixes false positive on alt="" [pull #9](https://github.com/mvdschee/web-accessibility/pull/9)
+* Enhancement [#7](https://github.com/mvdschee/web-accessibility/issues/7): Added check for `tabindex`
+* Bug [#8](https://github.com/mvdschee/web-accessibility/issues/8): Title check does not trigger when `<head>` is empty and right next to `</head>`
+* Fixed issue with completionProvider
+* Changed some error messages to show a contrast between hint/description and a [code example]
+
 ## Version 0.2.2
 * If the document gets closed, problems disappear.
 * Removed all comments that had no real function.
