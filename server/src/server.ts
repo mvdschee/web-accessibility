@@ -168,6 +168,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						_diagnostics(resultHtml.meta, resultHtml.mess);
 					}
 					break;
+				// Tabindex
+				case (/tabin/i.test(el)):
+					let resultTab = await Pattern.validateTab(m);
+					if (resultTab) {
+						problems++;
+						_diagnostics(resultTab.meta, resultTab.mess);
+					}
+					break;
 				default:
 					break;
 			}

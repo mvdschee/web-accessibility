@@ -17,7 +17,8 @@ const patterns: string[] = [
 	"<img(?:.)+?>",
 	"<input(?:.)+?>",
 	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
-	"<html(?:.)+?>"
+	"<html(?:.)+?>",
+	"tabindex=\"(?:.)+?\""
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
 
@@ -205,7 +206,7 @@ export async function validateInput(m: RegExpExecArray) {
 			} else {
 				return {
 					meta: m,
-					mess: 'Provide an id with in the aria labelled by [aria-labelledby=""]'
+					mess: 'Provide an id with in the aria labelledby [aria-labelledby=""]'
 				};
 			}
 		case (/role=/i.test(m[0])):
@@ -216,5 +217,15 @@ export async function validateInput(m: RegExpExecArray) {
 				meta: m,
 				mess: 'Provide an aria label [aria-label=""]'
 			};
+	}
+}
+
+export async function validateTab(m: RegExpExecArray) {
+	connection.console.log(m[0]);
+	if (!/tabindex="(?:0|-1)"/i.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'A tabindex greater than 0 interferes with the focus order. Try restructuring the HTML'
+		};
 	}
 }
