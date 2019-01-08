@@ -28,9 +28,6 @@ connection.onInitialize((params: InitializeParams) => {
 	return {
 		capabilities: {
 			textDocumentSync: documents.syncKind,
-			completionProvider: {
-				resolveProvider: false
-			}
 		}
 	};
 });
