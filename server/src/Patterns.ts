@@ -16,12 +16,12 @@ const patterns: string[] = [
 	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
 	"<img(?:.)+?>",
 	"<input(?:.)+?>",
-	"<head(?:.|)+?>(?:(?:\\s|\\S)+?(?=<\/head>))<\/head>",
+	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
 	"<html(?:.)+?>"
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
 
-const nonDescriptiveAlts = [
+const nonDescriptiveAlts: string[] = [
 	"alt=\"image\"",
 	"alt=\"picture\"",
 	"alt=\"logo\"",
@@ -35,7 +35,7 @@ const nonDescriptiveAlts = [
 ];
 const nonDescriptiveAltsTogether = new RegExp(nonDescriptiveAlts.join("|"), "i");
 
-const badAltStarts = [
+const badAltStarts: string[] = [
 	"alt=\"image of",
 	"alt=\"picture of",
 	"alt=\"logo of",
