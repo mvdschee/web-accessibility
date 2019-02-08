@@ -10,7 +10,7 @@ import {
 	DiagnosticSeverity,
 	ProposedFeatures,
 	InitializeParams,
-	DidChangeConfigurationNotification
+	DidChangeConfigurationNotification,
 } from 'vscode-languageserver';
 import * as Pattern from './patterns';
 
@@ -103,6 +103,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 		if (m != null) {
 			let el = m[0].slice(0, 5);
 			switch (true) {
+				// ID
+				// case (/id="/i.test(el)):
+				// 	let resultId = await Pattern.validateId(m);
+				// 	if (resultId) {
+				// 		problems++;
+				// 		_diagnostics(resultId.meta, resultId.mess);
+				// 	}
+				// 	break;
 				// Div
 				case (/<div/i.test(el)):
 					let resultDiv = await Pattern.validateDiv(m);
@@ -190,7 +198,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				end: textDocument.positionAt(regEx.index + regEx[0].length)
 			},
 			message: diagnosticsMessage,
-			source: 'web accessibility'
+			source: 'web accessibility',
 		};
 
 		diagnostics.push(diagnosic);
