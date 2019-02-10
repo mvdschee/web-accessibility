@@ -23,7 +23,8 @@
 		"multi-root ready"
 	],
 	"activationEvents": [
-		"onLanguage:html"
+		"onLanguage:html",
+		"onLanguage:javascriptreact"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
