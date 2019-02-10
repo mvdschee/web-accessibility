@@ -37,7 +37,10 @@ export function activate(context: ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for HTML documents
-		documentSelector: [{ scheme: 'file', language: 'html' }],
+		documentSelector: [
+			{ language: 'html', scheme: 'file' },
+			{ language: 'javascriptreact', scheme: 'file' }
+		],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
 			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
