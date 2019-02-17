@@ -106,7 +106,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 				// 	break;
 				// Div
 				case (/<div/i.test(el)):
-					if (settings.semanticExclude === true) {
+					if (settings.semanticExclude === false) {
 						let resultDiv = await Pattern.validateDiv(m);
 						if (resultDiv) {
 							problems++;
@@ -116,7 +116,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					break;
 				// Span
 				case (/<span/i.test(el)):
-					if (settings.semanticExclude === true) {
+					if (settings.semanticExclude === false) {
 						let resultSpan = await Pattern.validateSpan(m);
 						if (resultSpan) {
 							problems++;
