@@ -15,7 +15,13 @@ The extension can do the following for you:
 
 
 ## 🔒Extension Settings
-At this point, you can enable/disable the extension, which is not that amazing. 
+The settings can be found at `File > Preferences > Settings > Extensions > Configuration`
+
+| Settings | Type | Default |
+| ---- | ---- | ---- |
+| Max Number Of Problems | number | 100 |
+| Semantic HTML | boolean | false |
+| Trace: Server | string | off |
 
 ## 🐛Known Issues
 The following Issues will be dealt with soon.

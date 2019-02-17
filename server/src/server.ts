@@ -48,9 +48,10 @@ connection.onInitialized(() => {
 
 interface ServerSettings {
 	maxNumberOfProblems: number;
+	semanticExclude: boolean;
 }
 
-const defaultSettings: ServerSettings = { maxNumberOfProblems: 1000 };
+const defaultSettings: ServerSettings = { maxNumberOfProblems: 100, semanticExclude: false };
 let globalSettings: ServerSettings = defaultSettings;
 let documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
 
@@ -59,7 +60,7 @@ connection.onDidChangeConfiguration(change => {
 		documentSettings.clear();
 	} else {
 		globalSettings = <ServerSettings>(
-			(change.settings.languageServerAccessibility || defaultSettings)
+			(change.settings.webAccessibility || defaultSettings)
 		);
 	}
 
@@ -74,10 +75,11 @@ function getDocumentSettings(resource: string): Thenable<ServerSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'languageServerAccessibility'
+			section: 'WebAccessibility'
 		});
 		documentSettings.set(resource, result);
 	}
+	connection.console.log(result.toString());
 	return result;
 }
 
@@ -113,18 +115,22 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				// 	break;
 				// Div
 				case (/<div/i.test(el)):
-					let resultDiv = await Pattern.validateDiv(m);
-					if (resultDiv) {
-						problems++;
-						_diagnostics(resultDiv.meta, resultDiv.mess);
+					if (settings.semanticExclude === true) {
+						let resultDiv = await Pattern.validateDiv(m);
+						if (resultDiv) {
+							problems++;
+							_diagnostics(resultDiv.meta, resultDiv.mess);
+						}
 					}
 					break;
 				// Span
 				case (/<span/i.test(el)):
-					let resultSpan = await Pattern.validateSpan(m);
-					if (resultSpan) {
-						problems++;
-						_diagnostics(resultSpan.meta, resultSpan.mess);
+					if (settings.semanticExclude === true) {
+						let resultSpan = await Pattern.validateSpan(m);
+						if (resultSpan) {
+							problems++;
+							_diagnostics(resultSpan.meta, resultSpan.mess);
+						}
 					}
 					break;
 				// Links

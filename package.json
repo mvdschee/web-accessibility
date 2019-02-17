@@ -2,7 +2,7 @@
 	"name": "web-accessibility",
 	"displayName": "Web Accessibility",
 	"description": "Web Accessibility for Visual Studio Code",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"publisher": "MaxvanderSchee",
 	"license": "MIT",
 	"repository": "https://github.com/mvdschee/web-accessibility",
@@ -32,13 +32,19 @@
 			"type": "object",
 			"title": "Configuration",
 			"properties": {
-				"languageServerAccessibility.maxNumberOfProblems": {
+				"webAccessibility.maxNumberOfProblems": {
 					"scope": "resource",
 					"type": "number",
 					"default": 100,
 					"description": "Controls the maximum number of problems produced by the server."
 				},
-				"languageServerAccessibility.trace.server": {
+				"webAccessibility.semanticExclude": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Controls if non-semantic HTML is going to produce problems by the server."
+				},
+				"webAccessibility.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
