@@ -1,4 +1,12 @@
 # CHANGELOG
+## Version 0.2.4
+* Enhancement [#17](https://github.com/mvdschee/web-accessibility/issues/17): Option to disable semantically transparent elements highlight
+* Enhancement [#15](https://github.com/mvdschee/web-accessibility/issues/15): Make sure all frames and iframes have a title attribute 
+* Enhancement [#12](https://github.com/mvdschee/web-accessibility/issues/12): Span check for button doesn't trigger on usage of btn
+* Added support for React [#13](https://github.com/mvdschee/web-accessibility/pull/13)
+* Fixed diagnostic source displaying as `undefined`
+* Updated dependencies 
+
 ## Version 0.2.3
 * Enhancement [#6](https://github.com/mvdschee/web-accessibility/issues/6) by [Liz Certa (@ecerta)](https://github.com/ecerta): adds more checks for alt text, removes whitespace, fixes false positive on alt="" [pull #9](https://github.com/mvdschee/web-accessibility/pull/9)
 * Enhancement [#7](https://github.com/mvdschee/web-accessibility/issues/7): Added check for `tabindex`

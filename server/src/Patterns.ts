@@ -13,13 +13,14 @@
 const patterns: string[] = [
 	"<div(?:.)+?>",
 	"<span(?:.)+?>",
-	"id=\"(?:.)+?\"",
+	// "id=\"(?:.)+?\"",
 	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
 	"<img(?:.)+?>",
 	"<input(?:.)+?>",
 	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
 	"<html(?:.)+?>",
 	"tabindex=\"(?:.)+?\"",
+	"<(?:i|)frame(?:.|)+?>"
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
 
@@ -226,6 +227,15 @@ export async function validateTab(m: RegExpExecArray) {
 		return {
 			meta: m,
 			mess: 'A tabindex greater than 0 interferes with the focus order. Try restructuring the HTML'
+		};
+	}
+}
+
+export async function validateFrame(m: RegExpExecArray) {
+	if (!/title=(?:.*?[a-z].*?)"/i.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Provide a title that describes the frames content [title=""]'
 		};
 	}
 }

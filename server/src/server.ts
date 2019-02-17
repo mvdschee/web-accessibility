@@ -2,24 +2,15 @@
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
-import {
-	createConnection,
-	TextDocuments,
-	TextDocument,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
-	DidChangeConfigurationNotification,
-} from 'vscode-languageserver';
+import * as server from 'vscode-languageserver';
 import * as Pattern from './patterns';
 
-let connection = createConnection(ProposedFeatures.all);
-let documents: TextDocuments = new TextDocuments();
+let connection = server.createConnection(server.ProposedFeatures.all);
+let documents: server.TextDocuments = new server.TextDocuments();
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 
-connection.onInitialize((params: InitializeParams) => {
+connection.onInitialize((params: server.InitializeParams) => {
 	let capabilities = params.capabilities;
 
 	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
@@ -35,7 +26,7 @@ connection.onInitialize((params: InitializeParams) => {
 connection.onInitialized(() => {
 	if (hasConfigurationCapability) {
 		connection.client.register(
-			DidChangeConfigurationNotification.type,
+			server.DidChangeConfigurationNotification.type,
 			undefined
 		);
 	}
@@ -75,11 +66,10 @@ function getDocumentSettings(resource: string): Thenable<ServerSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'WebAccessibility'
+			section: 'webAccessibility'
 		});
 		documentSettings.set(resource, result);
 	}
-	connection.console.log(result.toString());
 	return result;
 }
 
@@ -94,16 +84,17 @@ documents.onDidChangeContent(change => {
 });
 
 // Only this part is interesting.
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+async function validateTextDocument(textDocument: server.TextDocument): Promise<void> {
 	let settings = await getDocumentSettings(textDocument.uri);
 	let text = textDocument.getText();
 	let problems = 0;
 	let m: RegExpExecArray | null;
-	let diagnostics: Diagnostic[] = [];
+	let diagnostics: server.Diagnostic[] = [];
 
 	while ((m = Pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		if (m != null) {
 			let el = m[0].slice(0, 5);
+			connection.console.log(el);
 			switch (true) {
 				// ID
 				// case (/id="/i.test(el)):
@@ -190,6 +181,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						_diagnostics(resultTab.meta, resultTab.mess);
 					}
 					break;
+				// iframe and frame
+				case (/(<fram|<ifra)/i.test(el)):
+					let resultFrame = await Pattern.validateFrame(m);
+					if (resultFrame) {
+						problems++;
+						_diagnostics(resultFrame.meta, resultFrame.mess);
+					}
+					break;
 				default:
 					break;
 			}
@@ -197,17 +196,18 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	}
 
 	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string) {
-		let diagnosic: Diagnostic = {
-			severity: DiagnosticSeverity.Warning,
+		let diagnostic: server.Diagnostic = {
+			severity: server.DiagnosticSeverity.Warning,
+			message: diagnosticsMessage,
 			range: {
 				start: textDocument.positionAt(regEx.index),
-				end: textDocument.positionAt(regEx.index + regEx[0].length)
+				end: textDocument.positionAt(regEx.index + regEx[0].length),
 			},
-			message: diagnosticsMessage,
-			source: 'web accessibility',
+			code: 0,
+			source: 'web accessibility'
 		};
 
-		diagnostics.push(diagnosic);
+		diagnostics.push(diagnostic);
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
