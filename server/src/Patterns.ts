@@ -1,24 +1,26 @@
 /*! patterns.ts
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
-import {
-	createConnection,
-	ProposedFeatures
-} from 'vscode-languageserver';
+// import {
+// 	createConnection,
+// 	ProposedFeatures
+// } from 'vscode-languageserver';
 
 // connection is used for debuging > connection.console.log();
-let connection = createConnection(ProposedFeatures.all);
+// let connection = createConnection(ProposedFeatures.all);
 
 // Order based om most common types first
 const patterns: string[] = [
 	"<div(?:.)+?>",
 	"<span(?:.)+?>",
+	// "id=\"(?:.)+?\"",
 	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
 	"<img(?:.)+?>",
 	"<input(?:.)+?>",
 	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
 	"<html(?:.)+?>",
-	"tabindex=\"(?:.)+?\""
+	"tabindex=\"(?:.)+?\"",
+	"<(?:i|)frame(?:.|)+?>"
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
 
@@ -61,7 +63,7 @@ export async function validateDiv(m: RegExpExecArray) {
 
 export async function validateSpan(m: RegExpExecArray) {
 	if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
-		if (/<span(?:.+?)button(?:.+?)>/.test(m[0])) {
+		if (/<span(?:.+?)(?:button|btn)(?:.+?)>/.test(m[0])) {
 			return {
 				meta: m,
 				mess: 'Change the span to a <button>'
@@ -221,7 +223,6 @@ export async function validateInput(m: RegExpExecArray) {
 }
 
 export async function validateTab(m: RegExpExecArray) {
-	connection.console.log(m[0]);
 	if (!/tabindex="(?:0|-1)"/i.test(m[0])) {
 		return {
 			meta: m,
@@ -229,3 +230,25 @@ export async function validateTab(m: RegExpExecArray) {
 		};
 	}
 }
+
+export async function validateFrame(m: RegExpExecArray) {
+	if (!/title=(?:.*?[a-z].*?)"/i.test(m[0])) {
+		return {
+			meta: m,
+			mess: 'Provide a title that describes the frames content [title=""]'
+		};
+	}
+}
+
+// export async function validateId(m: RegExpExecArray) {
+// 	let connection = createConnection(ProposedFeatures.all);
+// 	let idValue = /id="(.*?[a-z].*?)"/i.exec(m[0])[1]; 
+// 	let pattern: RegExp = new RegExp(idValue, 'i');
+// 	// connection.console.log(idValue);
+// 	if (pattern.exec(m.input).length == 2) {
+// 		return {
+// 			meta: m,
+// 			mess: 'Duplicated id'
+// 		};
+// 	}
+// }
