@@ -3,7 +3,7 @@
 	"description": "Web Accessibility for Visual Studio Code",
 	"author": "MaxvanderSchee",
 	"license": "MIT",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"publisher": "MaxvanderSchee",
 	"repository": "https://github.com/mvdschee/web-accessibility",
 	"engines": {
