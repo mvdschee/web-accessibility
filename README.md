@@ -15,7 +15,7 @@ The extension can do the following for you:
 
 
 ## 🔒Extension Settings
-The settings can be found at `File > Preferences > Settings > Extensions > Configuration`
+The settings can be found at `File > Preferences > Settings > Extensions > Web Accessibility`
 
 | Settings | Type | Default |
 | ---- | ---- | ---- |

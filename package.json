@@ -30,7 +30,7 @@
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "Configuration",
+			"title": "Web Accessibility",
 			"properties": {
 				"webAccessibility.maxNumberOfProblems": {
 					"scope": "resource",
