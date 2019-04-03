@@ -1,4 +1,4 @@
-/*! patterns.ts
+/*! accessibilityPatterns.ts
 * Flamingos are pretty badass!
 * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 // import {
