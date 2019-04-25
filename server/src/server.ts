@@ -110,7 +110,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 						let resultDiv = await pattern.validateDiv(m);
 						if (resultDiv) {
 							problems++;
-							_diagnostics(resultDiv.meta, resultDiv.mess);
+							_diagnostics(resultDiv.meta, resultDiv.mess, resultDiv.severity);
 						}
 					}
 					break;
@@ -120,7 +120,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 						let resultSpan = await pattern.validateSpan(m);
 						if (resultSpan) {
 							problems++;
-							_diagnostics(resultSpan.meta, resultSpan.mess);
+							_diagnostics(resultSpan.meta, resultSpan.mess, resultSpan.severity);
 						}
 					}
 					break;
@@ -129,7 +129,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultA = await pattern.validateA(m);
 					if (resultA) {
 						problems++;
-						_diagnostics(resultA.meta, resultA.mess);
+						_diagnostics(resultA.meta, resultA.mess, resultA.severity);
 					}
 					break;
 				// Images
@@ -137,7 +137,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultImg = await pattern.validateImg(m);
 					if (resultImg) {
 						problems++;
-						_diagnostics(resultImg.meta, resultImg.mess);
+						_diagnostics(resultImg.meta, resultImg.mess, resultImg.severity);
 					}
 					break;
 				// input
@@ -145,7 +145,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultInput = await pattern.validateInput(m);
 					if (resultInput) {
 						problems++;
-						_diagnostics(resultInput.meta, resultInput.mess);
+						_diagnostics(resultInput.meta, resultInput.mess, resultInput.severity);
 					}
 					break;
 				// Head, title and meta
@@ -154,14 +154,14 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 						let resultMeta = await pattern.validateMeta(m);
 						if (resultMeta) {
 							problems++;
-							_diagnostics(resultMeta.meta, resultMeta.mess);
+							_diagnostics(resultMeta.meta, resultMeta.mess, resultMeta.severity);
 						}
 					}
 					if (!/<title>/i.test(m[0]) || /<title>/i.test(m[0])) {
 						let resultTitle = await pattern.validateTitle(m);
 						if (resultTitle) {
 							problems++;
-							_diagnostics(resultTitle.meta, resultTitle.mess);
+							_diagnostics(resultTitle.meta, resultTitle.mess, resultTitle.severity);
 						}
 					}
 					break;
@@ -170,7 +170,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultHtml = await pattern.validateHtml(m);
 					if (resultHtml) {
 						problems++;
-						_diagnostics(resultHtml.meta, resultHtml.mess);
+						_diagnostics(resultHtml.meta, resultHtml.mess, resultHtml.severity);
 					}
 					break;
 				// Tabindex
@@ -178,7 +178,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultTab = await pattern.validateTab(m);
 					if (resultTab) {
 						problems++;
-						_diagnostics(resultTab.meta, resultTab.mess);
+						_diagnostics(resultTab.meta, resultTab.mess, resultTab.severity);
 					}
 					break;
 				// iframe and frame
@@ -186,7 +186,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					let resultFrame = await pattern.validateFrame(m);
 					if (resultFrame) {
 						problems++;
-						_diagnostics(resultFrame.meta, resultFrame.mess);
+						_diagnostics(resultFrame.meta, resultFrame.mess, resultFrame.severity);
 					}
 					break;
 				default:
@@ -195,9 +195,26 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 		}
 	}
 
-	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string) {
+	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string, severityNumber: number) {
+		let severity: server.DiagnosticSeverity;
+
+		switch (severityNumber) {
+			case 1:
+				severity = server.DiagnosticSeverity.Error;
+				break;
+			case 2:
+				severity = server.DiagnosticSeverity.Warning;
+				break;
+			case 3:
+				severity = server.DiagnosticSeverity.Information;
+				break;
+			case 4:
+				severity = server.DiagnosticSeverity.Hint;
+				break;
+		}
+
 		let diagnostic: server.Diagnostic = {
-			severity: server.DiagnosticSeverity.Warning,
+			severity,
 			message: diagnosticsMessage,
 			range: {
 				start: textDocument.positionAt(regEx.index),
