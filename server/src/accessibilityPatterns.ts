@@ -126,13 +126,13 @@ export async function validateMeta(m: RegExpExecArray) {
 	let oldRegEx: RegExpExecArray = m;
 	if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(oldRegEx[0]))) {
 		metaRegEx.index = oldRegEx.index + metaRegEx.index;
-		if (!/scalable=(?:\s+?yes)/i.test(metaRegEx[0])) {
+		if (!/user-scalable=yes/i.test(metaRegEx[0])) {
 			return {
 				meta: metaRegEx,
 				mess: 'Enable pinching to zoom [user-scalable=yes]'
 			};
 		}
-		if (/maximum-scale=(?:\s+?1)/i.test(metaRegEx[0])) {
+		if (/maximum-scale=1/i.test(metaRegEx[0])) {
 			return {
 				meta: metaRegEx,
 				mess: 'Avoid using [maximum-scale=1]'
