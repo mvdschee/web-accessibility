@@ -3,7 +3,7 @@
 	"description": "Web Accessibility for Visual Studio Code",
 	"author": "MaxvanderSchee",
 	"license": "MIT",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"publisher": "MaxvanderSchee",
 	"repository": "https://github.com/mvdschee/web-accessibility",
 	"engines": {
@@ -14,9 +14,9 @@
 		"postinstall": "vscode-install"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^4.1.4"
+		"vscode-languageclient": "^4.4.2"
 	},
 	"devDependencies": {
-		"vscode": "^1.1.29"
+		"vscode": "^1.1.33"
 	}
 }
