@@ -1,4 +1,12 @@
 # CHANGELOG
+## Version 0.2.6
+* Bug fix [#21](https://github.com/mvdschee/web-accessibility/issues/21): Meta viewport recommendation of adding user-scalable displays after fix
+* Added different severity levels based on the filter rules
+
+## Version 0.2.5
+* Bug fix [#20](https://github.com/mvdschee/web-accessibility/issues/20): Error: Cannot find module './patterns' - server not restarted after 3rd try
+* Fixed naming of Extension Settings.
+
 ## Version 0.2.4
 * Enhancement [#17](https://github.com/mvdschee/web-accessibility/issues/17): Option to disable semantically transparent elements highlight
 * Enhancement [#15](https://github.com/mvdschee/web-accessibility/issues/15): Make sure all frames and iframes have a title attribute 
