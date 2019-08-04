@@ -2,7 +2,7 @@
 	"name": "web-accessibility",
 	"displayName": "Web Accessibility",
 	"description": "Web Accessibility for Visual Studio Code",
-	"version": "0.2.4",
+	"version": "0.2.6",
 	"publisher": "MaxvanderSchee",
 	"license": "MIT",
 	"repository": "https://github.com/mvdschee/web-accessibility",
@@ -65,9 +65,9 @@
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@types/mocha": "^5.2.5",
-		"@types/node": "^8.10.39",
-		"tslint": "^5.12.1",
-		"typescript": "^3.3.3"
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^8.10.46",
+		"tslint": "^5.16.0",
+		"typescript": "^3.4.5"
 	}
 }
