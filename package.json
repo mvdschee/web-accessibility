@@ -23,7 +23,8 @@
 	],
 	"activationEvents": [
 		"onLanguage:html",
-		"onLanguage:javascriptreact"
+		"onLanguage:javascriptreact",
+		"onLanguage:razor"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
