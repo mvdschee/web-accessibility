@@ -1,4 +1,9 @@
 # CHANGELOG
+## Version 0.2.7
+* Correct spelling mistakes [pull #23](https://github.com/mvdschee/web-accessibility/pull/23) by [Gilles Leblanc](https://github.com/gilles-leblanc)
+* Updated/Upgraded dependencies
+* Added check for `type="hidden"` on input [#25](https://github.com/mvdschee/web-accessibility/issues/25)
+
 ## Version 0.2.6
 * Bug fix [#21](https://github.com/mvdschee/web-accessibility/issues/21): Meta viewport recommendation of adding user-scalable displays after fix
 * Added different severity levels based on the filter rules
