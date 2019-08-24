@@ -187,13 +187,15 @@ export async function validateHtml(m: RegExpExecArray) {
 
 export async function validateInput(m: RegExpExecArray) {
 	switch (true) {
+		case (/type="hidden"/i.test(m[0])):
+			break;
 		case (/aria-label=/i.test(m[0])):
 			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])){
 				break;
 			} else {
 				return {
 					meta: m,
-					mess: 'Provide an text with in the aria label [aria-label=""]',
+					mess: 'Provide a text within the aria label [aria-label=""]',
 					severity: 3
 				};
 			}
@@ -224,7 +226,7 @@ export async function validateInput(m: RegExpExecArray) {
 			} else {
 				return {
 					meta: m,
-					mess: 'Provide an id with in the aria labelledby [aria-labelledby=""]',
+					mess: 'Provide an id within the aria labelledby [aria-labelledby=""]',
 					severity: 1
 				};
 			}
@@ -254,7 +256,7 @@ export async function validateFrame(m: RegExpExecArray) {
 	if (!/title=(?:.*?[a-z].*?)"/i.test(m[0])) {
 		return {
 			meta: m,
-			mess: 'Provide a title that describes the frames content [title=""]',
+			mess: 'Provide a title that describes the frame\'s content [title=""]',
 			severity: 3
 		};
 	}
