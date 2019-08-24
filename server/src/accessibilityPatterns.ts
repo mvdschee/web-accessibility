@@ -187,6 +187,8 @@ export async function validateHtml(m: RegExpExecArray) {
 
 export async function validateInput(m: RegExpExecArray) {
 	switch (true) {
+		case (/type="hidden"/i.test(m[0])):
+			break;
 		case (/aria-label=/i.test(m[0])):
 			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])){
 				break;
