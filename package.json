@@ -23,7 +23,8 @@
 	],
 	"activationEvents": [
 		"onLanguage:html",
-		"onLanguage:javascriptreact"
+		"onLanguage:javascriptreact",
+		"onLanguage:vue-html",
 	],
 	"main": "./client/out/extension",
 	"contributes": {
