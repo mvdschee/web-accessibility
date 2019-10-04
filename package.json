@@ -25,6 +25,7 @@
 		"onLanguage:html",
 		"onLanguage:javascriptreact",
 		"onLanguage:vue-html",
+		"onLanguage:vue"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
