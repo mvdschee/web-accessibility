@@ -1,4 +1,10 @@
 # CHANGELOG
+## Version 0.2.8
+* Added support for Vue-html [pull #27](https://github.com/mvdschee/web-accessibility/pull/27) by [Kemal Ahmed](https://github.com/goatandsheep)
+* Added support for Vue linting
+* Changed patterns to be less prone to false positives
+* Updated readme
+
 ## Version 0.2.7
 * Correct spelling mistakes [pull #23](https://github.com/mvdschee/web-accessibility/pull/23) by [Gilles Leblanc](https://github.com/gilles-leblanc)
 * Updated/Upgraded dependencies
