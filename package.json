@@ -1,8 +1,8 @@
 {
 	"name": "web-accessibility",
 	"displayName": "Web Accessibility",
-	"description": "Web Accessibility for Visual Studio Code",
-	"version": "0.2.6",
+	"description": "Audit Web Accessibility issues in Visual Studio Code",
+	"version": "0.2.8",
 	"publisher": "MaxvanderSchee",
 	"license": "MIT",
 	"repository": "https://github.com/mvdschee/web-accessibility",
@@ -11,20 +11,22 @@
 		"vscode": "^1.25.0"
 	},
 	"categories": [
-		"Linters",
-		"Formatters"
+		"Linters"
 	],
 	"keywords": [
 		"web accessibility",
 		"a11y",
 		"wai-aria",
 		"wai",
-		"accessibility"
+		"accessibility",
+		"audit"
 	],
 	"activationEvents": [
 		"onLanguage:html",
 		"onLanguage:javascriptreact",
 		"onLanguage:razor"
+		"onLanguage:vue-html",
+		"onLanguage:vue"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
@@ -66,9 +68,9 @@
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@types/mocha": "^5.2.6",
-		"@types/node": "^8.10.46",
-		"tslint": "^5.16.0",
-		"typescript": "^3.4.5"
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^8.10.52",
+		"tslint": "^5.19.0",
+		"typescript": "^3.5.3"
 	}
 }

@@ -11,16 +11,16 @@
 
 // Order based om most common types first
 const patterns: string[] = [
-	"<div(?:.)+?>",
-	"<span(?:.)+?>",
+	"<div(>|)(?:.)+?>",
+	"<span(>|)(?:.)+?>",
 	// "id=\"(?:.)+?\"",
-	"<a(?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
-	"<img(?:.)+?>",
-	"<input(?:.)+?>",
-	"<head(?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
-	"<html(?:.)+?>",
+	"<a (?:.)+?>(?:(?:\\s|\\S)+?(?=<\/a>))<\/a>",
+	"<img (?:.)+?>",
+	"<input (?:.)+?>",
+	"<head (?:.|)+?>(?:(?:\\s|\\S|)+?(?=<\/head>))<\/head>",
+	"<html(>|)(?:.)+?>",
 	"tabindex=\"(?:.)+?\"",
-	"<(?:i|)frame(?:.|)+?>"
+	"<(?:i|)frame (?:.|)+?>"
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
 
@@ -187,6 +187,8 @@ export async function validateHtml(m: RegExpExecArray) {
 
 export async function validateInput(m: RegExpExecArray) {
 	switch (true) {
+		case (/type="hidden"/i.test(m[0])):
+			break;
 		case (/aria-label=/i.test(m[0])):
 			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])){
 				break;

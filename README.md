@@ -1,18 +1,17 @@
 # Web Accessibility Extension - Visual Studio Code
 [![The MIT License](https://flat.badgen.net/badge/license/MIT/orange)](http://opensource.org/licenses/MIT)
 [![GitHub](https://flat.badgen.net/github/release/mvdschee/web-accessibility)](https://github.com/mvdschee/web-accessibility/releases)
-[![Visual Studio Marketplace](https://flat.badgen.net/vs-marketplace/d/MaxvanderSchee.web-accessibility)](https://marketplace.visualstudio.com/items?itemName=MaxvanderSchee.web-accessibility)
+[![Visual Studio Marketplace](https://flat.badgen.net/vs-marketplace/i/MaxvanderSchee.web-accessibility)](https://marketplace.visualstudio.com/items?itemName=MaxvanderSchee.web-accessibility)
 
-### So I heard you wanted to write more accessible websites? Well, you came to the right Extension!
-> Although this extension will help you write better Web Accessible applications/websites is only based on your code, which means it can't cover the full spectrum of Web Accessibility. 
+### So I heard you wanted to write more accessible code? Well, you came to the right Extension!
+> This extension is here to help you get feedback on what parts need some more attention for it to be accessible, this is just the basics and doesn't cover all the rules but will help with making your project more accessible.
 
 ## ✨Features
 ![](./web-accessibility.gif)
 
 The extension can do the following for you:
 * Highlight elements that you should consider changing.
-* Give a hint what to change
-
+* Give a hint on how you should change it.
 
 ## 🔒Extension Settings
 The settings can be found at `File > Preferences > Settings > Extensions > Web Accessibility`
@@ -22,11 +21,6 @@ The settings can be found at `File > Preferences > Settings > Extensions > Web A
 | Max Number Of Problems | number | 100 |
 | Semantic HTML | boolean | false |
 | Trace: Server | string | off |
-
-## 🐛Known Issues
-The following Issues will be dealt with soon.
-* More informing messages with links to resources.
-* Not all Web Accessibility errors implemented.
 
 ## 📝Release Notes
 All notable changes to this project will be documented in the [Changelog](./CHANGELOG.md).
