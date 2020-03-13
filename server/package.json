@@ -1,16 +1,16 @@
 {
-	"name": "web-accessibility-server",
-	"description": "Audit Web Accessibility issues in Visual Studio Code",
-	"author": "MaxvanderSchee",
-	"license": "MIT",
-	"version": "0.2.8",
-	"publisher": "MaxvanderSchee",
-	"repository": "https://github.com/mvdschee/web-accessibility",
-	"engines": {
-		"node": "*"
-	},
-	"dependencies": {
-		"vscode-languageserver": "^4.4.2"
-	},
-	"scripts": {}
+  "name": "web-accessibility-server",
+  "description": "Audit Web Accessibility issues in Visual Studio Code",
+  "author": "MaxvanderSchee",
+  "license": "MIT",
+  "version": "0.2.82",
+  "publisher": "MaxvanderSchee",
+  "repository": "https://github.com/mvdschee/web-accessibility",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^4.4.2"
+  },
+  "scripts": {}
 }

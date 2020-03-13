@@ -1,75 +1,75 @@
 {
-	"name": "web-accessibility",
-	"displayName": "Web Accessibility",
-	"description": "Audit Web Accessibility issues in Visual Studio Code",
-	"version": "0.2.8",
-	"publisher": "MaxvanderSchee",
-	"license": "MIT",
-	"repository": "https://github.com/mvdschee/web-accessibility",
-	"icon": "a11y-icon.png",
-	"engines": {
-		"vscode": "^1.25.0"
-	},
-	"categories": [
-		"Linters"
-	],
-	"keywords": [
-		"web accessibility",
-		"a11y",
-		"wai-aria",
-		"wai",
-		"accessibility",
-		"audit"
-	],
-	"activationEvents": [
-		"onLanguage:html",
-		"onLanguage:javascriptreact",
-		"onLanguage:vue-html",
-		"onLanguage:vue"
-	],
-	"main": "./client/out/extension",
-	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Web Accessibility",
-			"properties": {
-				"webAccessibility.maxNumberOfProblems": {
-					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				},
-				"webAccessibility.semanticExclude": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Controls if non-semantic HTML is going to produce problems by the server."
-				},
-				"webAccessibility.trace.server": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
-		"compile": "tsc -b",
-		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
-	},
-	"devDependencies": {
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^8.10.52",
-		"tslint": "^5.19.0",
-		"typescript": "^3.5.3"
-	}
+  "name": "web-accessibility",
+  "displayName": "Web Accessibility",
+  "description": "Audit Web Accessibility issues in Visual Studio Code",
+  "version": "0.2.82",
+  "publisher": "MaxvanderSchee",
+  "license": "MIT",
+  "repository": "https://github.com/mvdschee/web-accessibility",
+  "icon": "a11y-icon.png",
+  "engines": {
+    "vscode": "^1.25.0"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "keywords": [
+    "web accessibility",
+    "a11y",
+    "wai-aria",
+    "wai",
+    "accessibility",
+    "audit"
+  ],
+  "activationEvents": [
+    "onLanguage:html",
+    "onLanguage:javascriptreact",
+    "onLanguage:vue-html",
+    "onLanguage:vue"
+  ],
+  "main": "./client/out/extension",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Web Accessibility",
+      "properties": {
+        "webAccessibility.maxNumberOfProblems": {
+          "scope": "resource",
+          "type": "number",
+          "default": 100,
+          "description": "Controls the maximum number of problems produced by the server."
+        },
+        "webAccessibility.semanticExclude": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Controls if non-semantic HTML is going to produce problems by the server."
+        },
+        "webAccessibility.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+    "test": "sh ./scripts/e2e.sh"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^8.10.59",
+    "tslint": "^5.20.1",
+    "typescript": "^3.8.3"
+  }
 }
