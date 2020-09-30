@@ -1,6 +1,6 @@
 /*! server.ts
-* Flamingos are pretty badass!
-* Copyright (c) 2018 Max van der Schee; Licensed MIT */
+ * Flamingos are pretty badass!
+ * Copyright (c) 2018 Max van der Schee; Licensed MIT */
 
 import * as server from 'vscode-languageserver';
 import * as pattern from './accessibilityPatterns';
@@ -19,19 +19,16 @@ connection.onInitialize((params: server.InitializeParams) => {
 	return {
 		capabilities: {
 			textDocumentSync: documents.syncKind,
-		}
+		},
 	};
 });
 
 connection.onInitialized(() => {
 	if (hasConfigurationCapability) {
-		connection.client.register(
-			server.DidChangeConfigurationNotification.type,
-			undefined
-		);
+		connection.client.register(server.DidChangeConfigurationNotification.type, undefined);
 	}
 	if (hasWorkspaceFolderCapability) {
-		connection.workspace.onDidChangeWorkspaceFolders(_event => {
+		connection.workspace.onDidChangeWorkspaceFolders((_event) => {
 			connection.console.log('Workspace folder change event received.');
 		});
 	}
@@ -46,13 +43,11 @@ const defaultSettings: ServerSettings = { maxNumberOfProblems: 100, semanticExcl
 let globalSettings: ServerSettings = defaultSettings;
 let documentSettings: Map<string, Thenable<ServerSettings>> = new Map();
 
-connection.onDidChangeConfiguration(change => {
+connection.onDidChangeConfiguration((change) => {
 	if (hasConfigurationCapability) {
 		documentSettings.clear();
 	} else {
-		globalSettings = <ServerSettings>(
-			(change.settings.webAccessibility || defaultSettings)
-		);
+		globalSettings = <ServerSettings>(change.settings.webAccessibility || defaultSettings);
 	}
 
 	documents.all().forEach(validateTextDocument);
@@ -66,20 +61,19 @@ function getDocumentSettings(resource: string): Thenable<ServerSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'webAccessibility'
+			section: 'webAccessibility',
 		});
 		documentSettings.set(resource, result);
 	}
 	return result;
 }
 
-documents.onDidClose(e => {
+documents.onDidClose((e) => {
 	documentSettings.delete(e.document.uri);
 	connection.sendDiagnostics({ uri: e.document.uri, diagnostics: [] });
 });
 
-
-documents.onDidChangeContent(change => {
+documents.onDidChangeContent((change) => {
 	validateTextDocument(change.document);
 });
 
@@ -94,7 +88,6 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 	while ((m = pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		if (m != null) {
 			let el = m[0].slice(0, 5);
-			connection.console.log(el);
 			switch (true) {
 				// ID
 				// case (/id="/i.test(el)):
@@ -105,7 +98,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 				// 	}
 				// 	break;
 				// Div
-				case (/<div/i.test(el)):
+				case /<div/i.test(el):
 					if (settings.semanticExclude === false) {
 						let resultDiv = await pattern.validateDiv(m);
 						if (resultDiv) {
@@ -115,7 +108,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// Span
-				case (/<span/i.test(el)):
+				case /<span/i.test(el):
 					if (settings.semanticExclude === false) {
 						let resultSpan = await pattern.validateSpan(m);
 						if (resultSpan) {
@@ -125,7 +118,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// Links
-				case (/<a\s/i.test(el)):
+				case /<a\s/i.test(el):
 					let resultA = await pattern.validateA(m);
 					if (resultA) {
 						problems++;
@@ -133,7 +126,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// Images
-				case (/<img/i.test(el)):
+				case /<img/i.test(el):
 					let resultImg = await pattern.validateImg(m);
 					if (resultImg) {
 						problems++;
@@ -141,7 +134,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// input
-				case (/<inpu/i.test(el)):
+				case /<inpu/i.test(el):
 					let resultInput = await pattern.validateInput(m);
 					if (resultInput) {
 						problems++;
@@ -149,7 +142,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// Head, title and meta
-				case (/<head/i.test(el)):
+				case /<head/i.test(el):
 					if (/<meta(?:.+?)viewport(?:.+?)>/i.test(m[0])) {
 						let resultMeta = await pattern.validateMeta(m);
 						if (resultMeta) {
@@ -166,7 +159,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// HTML
-				case (/<html/i.test(el)):
+				case /<html/i.test(el):
 					let resultHtml = await pattern.validateHtml(m);
 					if (resultHtml) {
 						problems++;
@@ -174,7 +167,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// Tabindex
-				case (/tabin/i.test(el)):
+				case /tabin/i.test(el):
 					let resultTab = await pattern.validateTab(m);
 					if (resultTab) {
 						problems++;
@@ -182,7 +175,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 					}
 					break;
 				// iframe and frame
-				case (/(<fram|<ifra)/i.test(el)):
+				case /(<fram|<ifra)/i.test(el):
 					let resultFrame = await pattern.validateFrame(m);
 					if (resultFrame) {
 						problems++;
@@ -221,7 +214,7 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 				end: textDocument.positionAt(regEx.index + regEx[0].length),
 			},
 			code: 0,
-			source: 'web accessibility'
+			source: 'web accessibility',
 		};
 
 		diagnostics.push(diagnostic);
