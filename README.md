@@ -24,8 +24,7 @@ The settings can be found at `File > Preferences > Settings > Extensions > Web A
 | Settings               | Type    | Default |
 | ---------------------- | ------- | ------- |
 | Max Number Of Problems | number  | 100     |
-| Semantic HTML          | boolean | false   |
-| Trace: Server          | string  | off     |
+| Semantic HTML          | boolean | true    |
 
 ## 📝Release Notes
 
