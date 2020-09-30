@@ -25,7 +25,8 @@
 		"onLanguage:html",
 		"onLanguage:javascriptreact",
 		"onLanguage:vue-html",
-		"onLanguage:vue"
+    "onLanguage:vue",
+    "onLanguage:handlebars"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
