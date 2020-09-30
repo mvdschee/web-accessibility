@@ -3,7 +3,7 @@
   "description": "Audit Web Accessibility issues in Visual Studio Code",
   "author": "MaxvanderSchee",
   "license": "MIT",
-  "version": "0.2.82",
+  "version": "0.2.83",
   "publisher": "MaxvanderSchee",
   "repository": "https://github.com/mvdschee/web-accessibility",
   "engines": {
@@ -17,6 +17,6 @@
     "vscode-languageclient": "^4.4.2"
   },
   "devDependencies": {
-    "vscode": "^1.1.36"
+    "vscode": "^1.1.37"
   }
 }
