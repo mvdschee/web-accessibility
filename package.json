@@ -24,9 +24,10 @@
 	"activationEvents": [
 		"onLanguage:html",
 		"onLanguage:javascriptreact",
+		"onLanguage:typescriptreact",
 		"onLanguage:vue-html",
-    "onLanguage:vue",
-    "onLanguage:handlebars"
+		"onLanguage:vue",
+		"onLanguage:handlebars"
 	],
 	"main": "./client/out/extension",
 	"contributes": {

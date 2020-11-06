@@ -33,6 +33,7 @@ export function activate(context: ExtensionContext) {
 		documentSelector: [
 			{ language: 'html', scheme: 'file' },
 			{ language: 'javascriptreact', scheme: 'file' },
+			{ language: 'typescriptreact', scheme: 'file' },
 			{ language: 'vue-html', scheme: 'file' },
 			{ language: 'vue', scheme: 'file' },
 			{ language: 'handlebars', scheme: 'file' },
