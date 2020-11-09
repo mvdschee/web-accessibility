@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.2.84
+
+-   Added support for TypeScript React [pull #42](https://github.com/mvdschee/web-accessibility/pull/42) by [Hamin Lee](https://github.com/hm-lee)
+
 ## Version 0.2.83
 
 -   Package upgrades
