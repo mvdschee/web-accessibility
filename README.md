@@ -14,8 +14,8 @@
 
 The extension can do the following for you:
 
-- Highlight elements that you should consider changing.
-- Give a hint on how you should change it.
+-   Highlight elements that you should consider changing.
+-   Give a hint on how you should change it.
 
 ## 🔒Extension Settings
 
@@ -34,14 +34,18 @@ All notable changes to this project will be documented in the [Changelog](./CHAN
 
 1. type in the terminal:
 
-   ```bash
-   # install dependencies
-   $ npm install
-   ```
+    ```bash
+    # install dependencies
+    $ npm install
+    ```
 
 2. Open debug panel in VScode and `RUN` "Launch Client"
 
 3. Open a project which contains a `HTML` file and see the linting in action.
+
+4. Build `vsce package`
+
+5. Publish `vsce publish`
 
 ## 💚License
 
