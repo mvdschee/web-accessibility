@@ -85,9 +85,42 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 	let m: RegExpExecArray | null;
 	let diagnostics: server.Diagnostic[] = [];
 
+	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string, severityNumber: number) {
+		let severity: server.DiagnosticSeverity;
+
+		switch (severityNumber) {
+			case 1:
+				severity = server.DiagnosticSeverity.Error;
+				break;
+			case 2:
+				severity = server.DiagnosticSeverity.Warning;
+				break;
+			case 3:
+				severity = server.DiagnosticSeverity.Information;
+				break;
+			case 4:
+				severity = server.DiagnosticSeverity.Hint;
+				break;
+		}
+
+		let diagnostic: server.Diagnostic = {
+			severity,
+			message: diagnosticsMessage,
+			range: {
+				start: textDocument.positionAt(regEx.index),
+				end: textDocument.positionAt(regEx.index + regEx[0].length),
+			},
+			code: 0,
+			source: 'web accessibility',
+		};
+
+		diagnostics.push(diagnostic);
+	}
+
 	while ((m = pattern.pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		if (m != null) {
-			let el = m[0].slice(0, 5);
+			const el = m[0].slice(0, 5);
+
 			switch (true) {
 				// ID
 				// case (/id="/i.test(el)):
@@ -188,37 +221,6 @@ async function validateTextDocument(textDocument: server.TextDocument): Promise<
 		}
 	}
 
-	async function _diagnostics(regEx: RegExpExecArray, diagnosticsMessage: string, severityNumber: number) {
-		let severity: server.DiagnosticSeverity;
-
-		switch (severityNumber) {
-			case 1:
-				severity = server.DiagnosticSeverity.Error;
-				break;
-			case 2:
-				severity = server.DiagnosticSeverity.Warning;
-				break;
-			case 3:
-				severity = server.DiagnosticSeverity.Information;
-				break;
-			case 4:
-				severity = server.DiagnosticSeverity.Hint;
-				break;
-		}
-
-		let diagnostic: server.Diagnostic = {
-			severity,
-			message: diagnosticsMessage,
-			range: {
-				start: textDocument.positionAt(regEx.index),
-				end: textDocument.positionAt(regEx.index + regEx[0].length),
-			},
-			code: 0,
-			source: 'web accessibility',
-		};
-
-		diagnostics.push(diagnostic);
-	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
