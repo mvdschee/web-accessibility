@@ -165,7 +165,7 @@ export async function validateTitle(m: RegExpExecArray) {
 		};
 	} else {
 		titleRegEx = /<title>(?:.*[a-z].*|\s*)?<\/title>/i.exec(oldRegEx[0]);
-		if (/>(?:|\s+?)</i.test(titleRegEx[0])) {
+		if (/<title>\s*<\/title>/i.test(titleRegEx[0])) {
 			titleRegEx.index = oldRegEx.index + titleRegEx.index;
 			return {
 				meta: titleRegEx,
