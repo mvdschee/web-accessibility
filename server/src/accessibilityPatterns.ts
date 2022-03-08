@@ -11,18 +11,18 @@
 
 // Order based om most common types first
 const patterns: string[] = [
-	'<div(>|)(?:.)+?>',
-	'<span(>|)(?:.)+?>',
+	'<div(?:\\s*|\\s+.+)>',
+	'<span(?:\\s*|\\s+.+)>',
 	// "id=\"(?:.)+?\"",
 	'<a (?:.)+?>(?:(?:\\s|\\S)+?(?=</a>))</a>',
-	'<img (?:.)+?>',
-	'<input (?:.)+?>',
-	'<head (?:.|)+?>(?:(?:\\s|\\S|)+?(?=</head>))</head>',
-	'<html(>|)(?:.)+?>',
-	'tabindex="(?:.)+?"',
-	'<(?:i|)frame (?:.|)+?>',
+	'<img(?:\\s*/?|\\s+.+)>',
+	'<input(?:\\s*/?|\\s+.+)>',
+	'<head(?:\\s*|\\s+.+)>(?:(?:\\s|\\S|)+?(?=</head>))</head>',
+	'<html(?:\\s*/?|\\s+.+)>',
+	'tabindex=".*"',
+	'<i?frame(?:\\s*|\\s+.+)>',
 ];
-export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
+export const pattern: RegExp = new RegExp(patterns.join('|'), 'igm');
 
 const nonDescriptiveAlts: string[] = [
 	'alt="image"',
