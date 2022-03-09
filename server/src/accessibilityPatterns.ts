@@ -14,15 +14,15 @@ const patterns: string[] = [
 	'<div(?:\\s+[^>]*)?>',
 	'<span(?:\\s+[^>]*)?>',
 	// "id=\"(?:.)+?\"",
-	'<a(?:\\s+[^>]*)?>([\\s\\S]*)(?=</a>)',
+	'<a(?:\\s+[^>]*)?>(.*)(?=</a>)',
 	'<img(?:\\s+[^>]*)?>',
 	'<input(?:\\s+[^>]*)?>',
-	'<head(?:\\s+[^>]*)?>([\\s\\S]*)(?=</head>)',
+	'<head(?:\\s+[^>]*)?>(.*)(?=</head>)',
 	'<html(?:\\s+[^>]*)?>',
 	'tabindex=".*"',
 	'<i?frame(?:\\s+[^>]*)?>',
 ];
-export const pattern: RegExp = new RegExp(patterns.join('|'), 'igm');
+export const pattern: RegExp = new RegExp(patterns.join('|'), 'igs');
 
 const nonDescriptiveAlts: string[] = [
 	'alt="image"',
@@ -63,9 +63,9 @@ export async function validateDiv(m: RegExpExecArray) {
 }
 
 export async function validateSpan(m: RegExpExecArray) {
-	if (!/role=(?:.*[a-z].*)"/i.test(m[0])) {
-		if (!/<span(?:.*)(?:aria-hidden="true)(?:.*)>/.test(m[0])) {
-			if (/<span(?:.*)(?:button|btn)(?:.*)>/.test(m[0])) {
+	if (!/role=(?:.*[a-z].*)"/im.test(m[0])) {
+		if (!/<span(?:.*)(?:aria-hidden="true)(?:.*)>/si.test(m[0])) {
+			if (/<span(?:.*)(?:button|btn)(?:.*)>/si.test(m[0])) {
 				return {
 					meta: m,
 					mess: 'Change the span to a <button>',
