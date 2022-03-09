@@ -41,7 +41,7 @@ All notable changes to this project will be documented in the [Changelog](./CHAN
 
 2. Open debug panel in VScode and `RUN` "Launch Client"
 
-3. Open a project which contains a `HTML` file and see the linting in action.
+3. Open `/playground` which contains test cases, this should give better or equal results as in opening in your current project setup with the plugin installed.
 
 4. Build `vsce package`
 
