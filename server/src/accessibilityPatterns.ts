@@ -11,16 +11,16 @@
 
 // Order based om most common types first
 const patterns: string[] = [
-	'<div(?:\\s*|\\s+[^>]+)>',
-	'<span(?:\\s*|\\s+[^>]+)>',
+	'<div(?:\\s+[^>]*)?>',
+	'<span(?:\\s+[^>]*)?>',
 	// "id=\"(?:.)+?\"",
-	'<a(?:\\s*|\\s+.+)>([\\s\\S]*)(?=</a>)',
-	'<img(?:\\s*/?|\\s+[^>]+)>',
-	'<input(?:\\s*/?|\\s+[^>]+)>',
-	'<head(?:\\s*|\\s+.+)>([\\s\\S]*)(?=</head>)',
-	'<html(?:\\s*/?|\\s+[^>]+)>',
+	'<a(?:\\s+[^>]*)?>([\\s\\S]*)(?=</a>)',
+	'<img(?:\\s+[^>]*)?>',
+	'<input(?:\\s+[^>]*)?>',
+	'<head(?:\\s+[^>]*)?>([\\s\\S]*)(?=</head>)',
+	'<html(?:\\s+[^>]*)?>',
 	'tabindex=".*"',
-	'<i?frame(?:\\s*|\\s+[^>]+)>',
+	'<i?frame(?:\\s+[^>]*)?>',
 ];
 export const pattern: RegExp = new RegExp(patterns.join('|'), 'igm');
 
