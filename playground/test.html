@@ -1,20 +1,36 @@
-<!-- create html with accessibility issues -->
+<!-- LANG: should trigger -->
 <html>
+	<!-- TITLE: should trigger -->
 	<head>
 		<meta charset="utf-8" />
+		<!-- META: should trigger -->
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="bootstrap.min.css" />
 		<script src="jquery.min.js"></script>
 		<script src="bootstrap.min.js"></script>
 		<style>
+			/* LANG: should NOT trigger */
 			html {
 				margin-bottom: 0;
 			}
 		</style>
 	</head>
 	<body>
-		<nav class="nav">
-			<span class="button"></span>
-		</nav>
+		<!-- DIV: should NOT trigger : change setting for other behavior -->
+		<div></div>
+		<!-- DIV: should NOT trigger : change setting for other behavior -->
+		<div role="section"></div>
+
+		<!-- SPAN: should trigger -->
+		<span class="btn"></span>
+		<!-- SPAN: should trigger -->
+		<span class="button"></span>
+		<!-- SPAN: should trigger -->
+		<span></span>
+		<!-- SPAN: should NOT trigger -->
+		<span role="button"></span>
+
+		<!-- LINK: should trigger -->
+		<a href="#" class="btn"></a>
 	</body>
 </html>
