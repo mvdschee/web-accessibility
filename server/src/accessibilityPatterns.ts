@@ -11,18 +11,18 @@
 
 // Order based om most common types first
 const patterns: string[] = [
-	'<div(>|)(?:.)+?>',
-	'<span(>|)(?:.)+?>',
+	'<div(?:\\s+[^>]*)?>',
+	'<span(?:\\s+[^>]*)?>',
 	// "id=\"(?:.)+?\"",
-	'<a (?:.)+?>(?:(?:\\s|\\S)+?(?=</a>))</a>',
-	'<img (?:.)+?>',
-	'<input (?:.)+?>',
-	'<head (?:.|)+?>(?:(?:\\s|\\S|)+?(?=</head>))</head>',
-	'<html(>|)(?:.)+?>',
-	'tabindex="(?:.)+?"',
-	'<(?:i|)frame (?:.|)+?>',
+	'<a(?:\\s+[^>]*)?>(.*)(?=</a>)',
+	'<img(?:\\s+[^>]*)?>',
+	'<input(?:\\s+[^>]*)?>',
+	'<head(?:\\s+[^>]*)?>(.*)(?=</head>)',
+	'<html(?:\\s+[^>]*)?>',
+	'tabindex=".*"',
+	'<i?frame(?:\\s+[^>]*)?>',
 ];
-export const pattern: RegExp = new RegExp(patterns.join('|'), 'ig');
+export const pattern: RegExp = new RegExp(patterns.join('|'), 'igs');
 
 const nonDescriptiveAlts: string[] = [
 	'alt="image"',
@@ -63,9 +63,9 @@ export async function validateDiv(m: RegExpExecArray) {
 }
 
 export async function validateSpan(m: RegExpExecArray) {
-	if (!/role=(?:.*?[a-z].*?)"/i.test(m[0])) {
-		if (!/<span(?:.+?)(?:aria-hidden="true)(?:.+?)>/.test(m[0])) {
-			if (/<span(?:.+?)(?:button|btn)(?:.+?)>/.test(m[0])) {
+	if (!/role=(?:.*[a-z].*)"/im.test(m[0])) {
+		if (!/<span(?:.*)(?:aria-hidden="true)(?:.*)>/si.test(m[0])) {
+			if (/<span(?:.*)(?:button|btn)(?:.*)>/si.test(m[0])) {
 				return {
 					meta: m,
 					mess: 'Change the span to a <button>',
@@ -85,9 +85,9 @@ export async function validateSpan(m: RegExpExecArray) {
 export async function validateA(m: RegExpExecArray) {
 	let aRegEx: RegExpExecArray;
 	let oldRegEx: RegExpExecArray = m;
-	let filteredString = m[0].replace(/<(?:\s|\S)+?>/gi, '');
-	if (!/(?:\S+?)/gi.test(filteredString)) {
-		aRegEx = /<a(?:.)+?>/i.exec(oldRegEx[0]);
+	let filteredString = m[0].replace(/<(?:[\s\S]*)>/gi, '');
+	if (!/(?:\S*)/gi.test(filteredString)) {
+		aRegEx = /<a(?:.*)>/i.exec(oldRegEx[0]);
 		aRegEx.index = oldRegEx.index;
 		return {
 			meta: aRegEx,
@@ -99,7 +99,7 @@ export async function validateA(m: RegExpExecArray) {
 
 export async function validateImg(m: RegExpExecArray) {
 	// Ordered by approximate frequency of the issue
-	if (!/alt="(?:.*?[a-z].*?)"/i.test(m[0]) && !/alt=""/i.test(m[0])) {
+	if (!/alt="(?:.*[a-z].*)"/i.test(m[0]) && !/alt=""/i.test(m[0])) {
 		return {
 			meta: m,
 			mess: 'Provide an alt text that describes the image, or alt="" if image is purely decorative',
@@ -121,7 +121,7 @@ export async function validateImg(m: RegExpExecArray) {
 		};
 	}
 	// Most screen readers cut off alt text at 125 characters.
-	if (/alt="(?:.*?[a-z].*.{125,}?)"/i.test(m[0])) {
+	if (/alt="(?:.*[a-z].{125,}?)"/i.test(m[0])) {
 		return {
 			meta: m,
 			mess: 'Alt text is too long',
@@ -133,7 +133,7 @@ export async function validateImg(m: RegExpExecArray) {
 export async function validateMeta(m: RegExpExecArray) {
 	let metaRegEx: RegExpExecArray;
 	let oldRegEx: RegExpExecArray = m;
-	if ((metaRegEx = /<meta(?:.+?)viewport(?:.+?)>/i.exec(oldRegEx[0]))) {
+	if ((metaRegEx = /<meta(?:.*)viewport(?:.*)>/i.exec(oldRegEx[0]))) {
 		metaRegEx.index = oldRegEx.index + metaRegEx.index;
 		if (!/user-scalable=yes/i.test(metaRegEx[0])) {
 			return {
@@ -156,7 +156,7 @@ export async function validateTitle(m: RegExpExecArray) {
 	let titleRegEx: RegExpExecArray;
 	let oldRegEx: RegExpExecArray = m;
 	if (!/<title>/i.test(oldRegEx[0])) {
-		titleRegEx = /<head(?:|.+?)>/i.exec(oldRegEx[0]);
+		titleRegEx = /<head(?:.*)>/i.exec(oldRegEx[0]);
 		titleRegEx.index = oldRegEx.index;
 		return {
 			meta: titleRegEx,
@@ -164,8 +164,8 @@ export async function validateTitle(m: RegExpExecArray) {
 			severity: 1,
 		};
 	} else {
-		titleRegEx = /<title>(?:|.*?[a-z].*?|\s+?)<\/title>/i.exec(oldRegEx[0]);
-		if (/>(?:|\s+?)</i.test(titleRegEx[0])) {
+		titleRegEx = /<title>(?:.*[a-z].*|\s*)?<\/title>/i.exec(oldRegEx[0]);
+		if (/<title>\s*<\/title>/i.test(titleRegEx[0])) {
 			titleRegEx.index = oldRegEx.index + titleRegEx.index;
 			return {
 				meta: titleRegEx,
@@ -177,7 +177,7 @@ export async function validateTitle(m: RegExpExecArray) {
 }
 
 export async function validateHtml(m: RegExpExecArray) {
-	if (!/lang=(?:.*?[a-z].*?)"/i.test(m[0])) {
+	if (!/lang=(?:.*[a-z].*)"/i.test(m[0])) {
 		return {
 			meta: m,
 			mess: 'Provide a language [lang=""]',
@@ -191,7 +191,7 @@ export async function validateInput(m: RegExpExecArray) {
 		case /type="hidden"/i.test(m[0]):
 			break;
 		case /aria-label=/i.test(m[0]):
-			if (!/aria-label="(?:(?![a-z]*?)|\s|)"/i.test(m[0])) {
+			if (!/aria-label="(?:(?![a-z]*)|\s*)"/i.test(m[0])) {
 				break;
 			} else {
 				return {
@@ -201,8 +201,8 @@ export async function validateInput(m: RegExpExecArray) {
 				};
 			}
 		case /id=/i.test(m[0]):
-			if (/id="(?:.*?[a-z].*?)"/i.test(m[0])) {
-				let idValue = /id="(.*?[a-z].*?)"/i.exec(m[0])[1];
+			if (/id="(?:.*[a-z].*)"/i.test(m[0])) {
+				let idValue = /id="(.*[a-z].*)"/i.exec(m[0])[1];
 				let pattern: RegExp = new RegExp('for="' + idValue + '"', 'i');
 				if (pattern.test(m.input)) {
 					break;
@@ -221,7 +221,7 @@ export async function validateInput(m: RegExpExecArray) {
 				};
 			}
 		case /aria-labelledby=/i.test(m[0]):
-			if (!/aria-labelledby="(?:(?![a-z]*?)|\s|)"/i.test(m[0])) {
+			if (!/aria-labelledby="(?:(?![a-z]*?)|\s?)"/i.test(m[0])) {
 				// TODO: needs to check elements with the same value.
 				break;
 			} else {
@@ -254,7 +254,7 @@ export async function validateTab(m: RegExpExecArray) {
 }
 
 export async function validateFrame(m: RegExpExecArray) {
-	if (!/title=(?:.*?[a-z].*?)"/i.test(m[0])) {
+	if (!/title=(?:.*[a-z].*)"/i.test(m[0])) {
 		return {
 			meta: m,
 			mess: 'Provide a title that describes the frame\'s content [title=""]',
