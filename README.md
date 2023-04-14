@@ -4,6 +4,8 @@
 [![GitHub](https://flat.badgen.net/github/release/mvdschee/web-accessibility)](https://github.com/mvdschee/web-accessibility/releases)
 [![Visual Studio Marketplace](https://flat.badgen.net/vs-marketplace/i/MaxvanderSchee.web-accessibility)](https://marketplace.visualstudio.com/items?itemName=MaxvanderSchee.web-accessibility)
 
+## ⚠️ _This project is no longer being actively developed or maintained._ ⚠️
+
 ### So I heard you wanted to write more accessible code? Well, you came to the right Extension!
 
 > This extension is here to help you get feedback on what parts need some more attention for it to be accessible, this is just the basics and doesn't cover all the rules but will help with making your project more accessible.
